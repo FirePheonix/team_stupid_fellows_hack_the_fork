@@ -71,6 +71,9 @@ type FermentationStore = {
   setSpeed: (speed: 1 | 4 | 12) => void;
   setPreview: (setpoints: Setpoints | null) => void;
   applyPreview: () => void;
+  intakeOpen: boolean;
+  openIntake: () => void;
+  closeIntake: () => void;
   hydrate: () => void;
 };
 
@@ -183,6 +186,9 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
     if (!preview) return;
     set({ preview: null, live: { ...live, setpoints: clampSetpoints(preview, bounds) } });
   },
+  intakeOpen: false,
+  openIntake: () => set({ intakeOpen: true }),
+  closeIntake: () => set({ intakeOpen: false }),
   hydrate: () => {
     if (typeof window === "undefined") return;
     const raw = window.localStorage.getItem(STORAGE_KEY);
