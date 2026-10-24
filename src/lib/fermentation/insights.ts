@@ -253,6 +253,68 @@ export function explainProcess(
   };
 }
 
+/**
+ * Plain sentences about damage that the readings already point at, before that damage has finished.
+ * `aheadEthanol` is the kinetic end only when the caller has projected the rest of a still-open batch.
+ */
+export function forewarning(
+  samples: ProcessState[],
+  setpoints: Setpoints,
+  sensitivity: number,
+  aheadEthanol: number | null = null,
+): string {
+  const now = samples.at(-1);
+  if (!now || now.tMin < 10) {
+    return "The batch has not moved far enough to warn. The first useful sign is dissolved oxygen leaving its target, or pH and temperature leaving 5 and 30°C, while ethanol is still low.";
+  }
+
+  const lines: string[] = [];
+  const oxygenShort = samples.find((row) => row.tMin >= 40 && row.dissolvedOxygen < setpoints.dissolvedOxygen - 2);
+  const ethanolLater = oxygenShort
+    ? samples.find((row) => row.tMin > oxygenShort.tMin + 30 && row.ethanol > oxygenShort.ethanol + 1)
+    : undefined;
+
+  if (oxygenShort && ethanolLater) {
+    lines.push(
+      `Dissolved oxygen was already under the ${setpoints.dissolvedOxygen.toFixed(0)}% target at ${oxygenShort.tMin} min (${oxygenShort.dissolvedOxygen.toFixed(0)}%), before ethanol reached ${ethanolLater.ethanol.toFixed(1)} g/L at ${ethanolLater.tMin} min. Sugar that missed the oxygen became ethanol instead of yeast protein. Contamination is not confirmed.`,
+    );
+  } else if (oxygenShort && aheadEthanol !== null && aheadEthanol > now.ethanol + 1) {
+    lines.push(
+      `Dissolved oxygen is already under the ${setpoints.dissolvedOxygen.toFixed(0)}% target at ${oxygenShort.tMin} min (${oxygenShort.dissolvedOxygen.toFixed(0)}%), and ethanol is still ${now.ethanol.toFixed(1)} g/L. Held on these knobs, the kinetic path puts ethanol near ${aheadEthanol.toFixed(1)} g/L by the end. Those grams do not become protein. The amino-acid pattern does not change.`,
+    );
+  }
+
+  const phOff = samples.find((row) => row.tMin >= 16 && Math.abs(row.ph - 5) >= 0.4);
+  if (phOff && Math.abs(now.ph - 5) >= 0.35 && lines.length < 2) {
+    lines.push(
+      `pH left 5 at ${phOff.tMin} min (it was ${phOff.ph.toFixed(2)}). Growth in this model is fastest at 5, so staying here slows the kilograms. It does not change which amino acid is limiting.`,
+    );
+  }
+
+  const warm = samples.find((row) => row.tMin >= 16 && Math.abs(row.temperature - 30) >= 2);
+  if (warm && Math.abs(now.temperature - 30) >= 1.5 && lines.length < 2) {
+    lines.push(
+      `Temperature left 30°C at ${warm.tMin} min (it was ${warm.temperature.toFixed(1)}°C). Warmer or cooler from there is slower growth, not a different protein.`,
+    );
+  }
+
+  const fault = readFault(samples, sensitivity);
+  if (lines.length < 2 && !fault.fault && fault.score > fault.threshold * 0.7 && now.tMin >= 40) {
+    const names = faultEvidence(now)
+      .slice(0, 2)
+      .map((item) => item.label)
+      .join(" and ");
+    lines.push(
+      `The fault score is ${fault.score.toFixed(2)}, still under ${fault.threshold.toFixed(2)}. ${names} are the readings pulling it up. If they keep drifting, the batch will be marked suspected. Contamination is not confirmed.`,
+    );
+  }
+
+  if (lines.length === 0) {
+    return `At ${now.tMin} min nothing is running ahead of the protein. Dissolved oxygen is ${now.dissolvedOxygen.toFixed(0)}% against a ${setpoints.dissolvedOxygen.toFixed(0)}% target, pH is ${now.ph.toFixed(2)}, temperature is ${now.temperature.toFixed(1)}°C, and ethanol is ${now.ethanol.toFixed(1)} g/L.`;
+  }
+  return lines.join(" ");
+}
+
 export function correlations(samples: ProcessState[]) {
   const pairs: [keyof ProcessState, keyof ProcessState][] = [
     ["dissolvedOxygen", "product"],

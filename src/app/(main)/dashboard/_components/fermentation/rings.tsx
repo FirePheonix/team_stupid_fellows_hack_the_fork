@@ -1,6 +1,9 @@
 "use client";
 
+import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
+
 import type { LucideIcon } from "lucide-react";
+import { createPortal } from "react-dom";
 import { Label, Pie, PieChart } from "recharts";
 
 import { Badge } from "@/components/ui/badge";
@@ -18,12 +21,14 @@ export function Ring({
   caption,
   tone = "var(--chart-1)",
   compact = false,
+  info,
 }: {
   value: number;
   label: string;
   caption: string;
   tone?: string;
   compact?: boolean;
+  info?: ReactNode;
 }) {
   const pct = clamp01(value);
   const radius = 36;
@@ -53,7 +58,12 @@ export function Ring({
           {label}
         </text>
       </svg>
-      {caption ? <p className="text-center text-muted-foreground text-xs">{caption}</p> : null}
+      {caption || info ? (
+        <div className="text-center text-muted-foreground text-xs">
+          {caption}
+          {info ? <span className="ms-1 inline-flex align-middle">{info}</span> : null}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -64,11 +74,13 @@ export function ArcMeter({
   label,
   caption,
   tone = "var(--chart-2)",
+  info,
 }: {
   value: number;
   label: string;
   caption: string;
   tone?: string;
+  info?: ReactNode;
 }) {
   const segments = 28;
   const filled = Math.round(clamp01(value) * segments);
@@ -97,8 +109,108 @@ export function ArcMeter({
           {label}
         </text>
       </svg>
-      <p className="text-center text-muted-foreground text-xs">{caption}</p>
+      <div className="text-center text-muted-foreground text-xs">
+        {caption}
+        {info ? <span className="ms-1 inline-flex align-middle">{info}</span> : null}
+      </div>
     </div>
+  );
+}
+
+type BubbleBox = { top: number; left: number; width: number; maxHeight: number };
+
+/** Hover bubble beside an (i). It stays inside the card that holds the meter. */
+export function MeterInfo({ label, children }: { label: string; children: ReactNode }) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [box, setBox] = useState<BubbleBox | null>(null);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const place = () => {
+      const button = buttonRef.current;
+      const bubble = bubbleRef.current;
+      const card = button?.closest("[data-slot='card']");
+      if (!button || !bubble || !(card instanceof HTMLElement)) return;
+      const buttonBox = button.getBoundingClientRect();
+      const cardBox = card.getBoundingClientRect();
+      const pad = 8;
+      const width = Math.min(240, cardBox.width - pad * 2);
+      let left = buttonBox.left + buttonBox.width / 2 - width / 2;
+      left = Math.max(cardBox.left + pad, Math.min(left, cardBox.right - width - pad));
+      const maxHeight = Math.max(48, cardBox.height - pad * 2);
+      const height = Math.min(bubble.getBoundingClientRect().height, maxHeight);
+      if (height < 8) return;
+      const gap = 6;
+      let top = buttonBox.top - height - gap;
+      if (top < cardBox.top + pad) top = buttonBox.bottom + gap;
+      if (top + height > cardBox.bottom - pad) top = cardBox.bottom - pad - height;
+      if (top < cardBox.top + pad) top = cardBox.top + pad;
+      setBox((prev) => {
+        if (
+          prev &&
+          Math.abs(prev.top - top) < 1 &&
+          Math.abs(prev.left - left) < 1 &&
+          prev.width === width &&
+          prev.maxHeight === maxHeight
+        ) {
+          return prev;
+        }
+        return { top, left, width, maxHeight };
+      });
+    };
+    place();
+    const frame = requestAnimationFrame(place);
+    const bubble = bubbleRef.current;
+    const observer = new ResizeObserver(place);
+    if (bubble) observer.observe(bubble);
+    window.addEventListener("scroll", place, true);
+    window.addEventListener("resize", place);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("scroll", place, true);
+      window.removeEventListener("resize", place);
+    };
+  }, [open]);
+
+  return (
+    <>
+      <button
+        ref={buttonRef}
+        type="button"
+        aria-label={label}
+        aria-expanded={open}
+        className="inline-flex size-4 items-center justify-center rounded-full border text-[10px] text-muted-foreground leading-none hover:text-foreground"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+      >
+        i
+      </button>
+      {open
+        ? createPortal(
+            <div
+              ref={bubbleRef}
+              role="tooltip"
+              style={{
+                position: "fixed",
+                top: box?.top ?? -9999,
+                left: box?.left ?? 0,
+                width: box?.width ?? 240,
+                maxHeight: box?.maxHeight,
+                visibility: box ? "visible" : "hidden",
+              }}
+              className="pointer-events-none z-50 overflow-auto rounded-xl border bg-popover p-2 text-left text-muted-foreground text-xs shadow-lg"
+            >
+              {children}
+            </div>,
+            document.body,
+          )
+        : null}
+    </>
   );
 }
 
@@ -118,12 +230,16 @@ export function KpiTile({
   value,
   note,
   badge,
+  hint,
+  hintLabel,
 }: {
   icon: LucideIcon;
   label: string;
   value: string;
   note: string;
   badge?: string;
+  hint?: ReactNode;
+  hintLabel?: string;
 }) {
   return (
     <Card>
@@ -133,7 +249,10 @@ export function KpiTile({
             <Icon className="size-4" />
           </div>
         </CardTitle>
-        <CardDescription>{label}</CardDescription>
+        <CardDescription className="flex items-center gap-1">
+          {label}
+          {hint ? <MeterInfo label={hintLabel ?? label}>{hint}</MeterInfo> : null}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">

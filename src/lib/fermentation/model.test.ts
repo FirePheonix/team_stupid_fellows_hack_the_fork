@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { forewarning } from "./insights";
 import { BATCH_MINUTES, DEFAULT_SETPOINTS, project, runMinutes } from "./model";
 
 describe("fermentation model", () => {
@@ -28,6 +29,17 @@ describe("fermentation model", () => {
     expect(stable.contaminant).toBe(0);
   });
 
+  it("names short oxygen before the ethanol has arrived", () => {
+    const limited = runMinutes("oxygen-limitation", DEFAULT_SETPOINTS, BATCH_MINUTES, 10);
+    const early = limited.filter((row) => row.tMin <= 220);
+    const earlyText = forewarning(early, DEFAULT_SETPOINTS, 50, 6);
+    expect(earlyText.toLowerCase()).toContain("ethanol is still");
+    expect(earlyText).not.toContain("Contamination is confirmed.");
+    const full = forewarning(limited, DEFAULT_SETPOINTS, 50);
+    expect(full.toLowerCase()).toContain("before ethanol");
+    const stable = runMinutes("stable", DEFAULT_SETPOINTS, BATCH_MINUTES, 10);
+    expect(forewarning(stable, DEFAULT_SETPOINTS, 50).toLowerCase()).toContain("nothing is running ahead");
+  });
   it("projects the same end state as running the batch", () => {
     const full = runMinutes("stable", DEFAULT_SETPOINTS, BATCH_MINUTES, BATCH_MINUTES).at(-1);
     const projected = project(

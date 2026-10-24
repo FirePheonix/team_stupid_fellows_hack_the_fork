@@ -15,7 +15,6 @@ import {
   type RunJson,
   repairRun,
   runFromState,
-  templateParagraph,
 } from "@/lib/fermentation/agent";
 import {
   CN_BOUNDS,
@@ -82,22 +81,8 @@ export function ProteinDesk() {
     [live.samples, live.setpoints, bounds, feedstock],
   );
   const powerKw = illustrativePowerKw(live.setpoints);
-  const packet: AgentPacket = buildPacket({
-    run: lastRun?.json ?? runFromState(feedstock, live.setpoints, { nitrogen, cnRatio }),
-    forecast,
-    fault,
-    evidence,
-    drivers,
-    candidates,
-    powerKw,
-    b,
-    score,
-    economics: run,
-    other,
-  });
-  const template = templateParagraph(packet);
 
-  // Re-ask the agent only after a turn; between turns the template tracks the live numbers.
+  // Clear the reply when the last question is dropped. The live numbers stay on the page.
   useEffect(() => {
     if (!lastRun) setParagraph(null);
   }, [lastRun]);
@@ -212,24 +197,24 @@ export function ProteinDesk() {
             type="button"
             aria-expanded={false}
             onClick={() => setAskOpen(true)}
-            className="rounded-l-lg border border-r-0 bg-card px-2 py-3 text-xs shadow-sm [writing-mode:vertical-rl]"
+            className="rounded-l-full border border-r-0 bg-card px-3 py-2 font-medium text-sm shadow-sm"
           >
-            Ask this run
+            Ask AI
           </button>
         </div>
       )}
       {askOpen ? (
-        <aside className="fixed top-12 right-0 bottom-0 z-40 flex w-[min(100%,24rem)] flex-col border-l bg-card shadow-lg">
+        <aside className="fixed top-12 right-0 bottom-0 z-40 flex w-[min(100%,22rem)] flex-col border-l bg-card shadow-lg">
           <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
             <div>
-              <h2 className="font-medium text-sm">Ask this run</h2>
+              <h2 className="font-medium text-sm">Ask AI</h2>
               <p className="text-muted-foreground text-xs">{live.name}</p>
             </div>
             <button type="button" className="text-muted-foreground text-xs underline" onClick={() => setAskOpen(false)}>
               Close
             </button>
           </div>
-          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-3">
+          <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-3">
             <form
               className="flex flex-col gap-2"
               onSubmit={(event) => {
@@ -237,131 +222,28 @@ export function ProteinDesk() {
                 void onAsk();
               }}
             >
-              <label className="text-muted-foreground text-xs" htmlFor="run-ask">
-                Prompt for this run
+              <label className="sr-only" htmlFor="run-ask">
+                Ask AI about this batch
               </label>
               <textarea
                 id="run-ask"
                 rows={3}
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                className="w-full rounded-xl border bg-background px-3 py-2 text-sm"
                 value={question}
-                placeholder="Pea-starch hydrolysate, score it."
+                placeholder="What if the air runs short?"
                 onChange={(event) => setQuestion(event.target.value)}
               />
               <Button type="submit" disabled={busy}>
-                {busy ? "Thinking…" : "Ask"}
+                {busy ? "Thinking…" : "Ask AI"}
               </Button>
             </form>
-            <p className="text-muted-foreground text-xs">
-              GPT-4o mini turns the sentence into run JSON. The simulation moves, Model A and Model B score it, and the
-              agent restates those numbers.
-            </p>
-            {lastRun ? (
-              <pre className="overflow-x-auto rounded-md bg-muted p-2 text-[11px] leading-snug">
-                {`intent: ${lastRun.json.intent} · parsed by ${lastRun.source}\n${JSON.stringify(lastRun.json)}`}
-              </pre>
+            {paragraph ? (
+              <p className="rounded-xl border bg-background p-3 text-sm">{paragraph.text}</p>
             ) : (
-              <p className="text-muted-foreground text-xs">
-                Ask about a feedstock, air, the score, a comparison, or a fault.
+              <p className="text-muted-foreground text-sm">
+                Ask how this batch looks, or what a change would do to the kilograms and the price.
               </p>
             )}
-            <div>
-              <h3 className="font-medium text-sm">Agent</h3>
-              <p className="text-muted-foreground text-xs">
-                {paragraph ? `Written by ${paragraph.source} from the packet only.` : "Template restating the packet."}
-              </p>
-              <p className="mt-2 text-sm">{paragraph?.text ?? template}</p>
-            </div>
-            <div className="flex flex-col gap-3">
-              <h3 className="flex items-center font-medium text-sm">
-                Feedstock and amino acids
-                <Info text={INFO.feedstock} />
-              </h3>
-              <p className="text-muted-foreground text-xs">
-                Amino acids from the research row for this feedstock, not from the probes.
-              </p>
-              <Select value={feedstock} onValueChange={(value) => setFeedstock(value as FeedstockId)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {FEEDSTOCKS.map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.label} · ₹{FEEDSTOCK_PARAMS[item.id].priceInrPerKgSugar}/kg sugar
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <ul className="flex flex-col gap-2">
-                {b.gramsPer100g.map((item) => (
-                  <li key={item.key} className="grid grid-cols-[7rem_1fr_auto] items-center gap-2 text-xs">
-                    <span>{item.label}</span>
-                    <span className="relative h-1.5 overflow-hidden rounded-full bg-muted">
-                      <span
-                        className="block h-full bg-foreground"
-                        style={{ width: `${Math.min(100, (item.grams / 8) * 100)}%` }}
-                      />
-                      <span
-                        className="absolute top-0 h-full w-px bg-destructive"
-                        style={{ left: `${Math.min(100, (item.requirement / 8) * 100)}%` }}
-                      />
-                    </span>
-                    <span>
-                      {item.grams.toFixed(1)} / {item.requirement.toFixed(1)} g
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-muted-foreground text-xs">
-                <Info text={INFO.amino} /> Limiting amino acid: {b.limitingAminoAcid} (coverage {b.coverage.toFixed(2)}
-                ). Food yeast is protein-rich and usually short on sulfur amino acids. Digestibility: not measured on
-                this batch. DIAAS: no published score for this ingredient is on file. Source: {b.source} {b.note}{" "}
-                Requirement: WHO/FAO/UNU 2007.
-              </p>
-              <div className="flex flex-col gap-1 text-sm">
-                Nitrogen
-                <Info text="Ammonia or yeast extract. Yeast extract raises the protein fraction of the cell. It is not a separate process story." />
-                <Select value={nitrogen} onValueChange={(value) => setNitrogen(value as Nitrogen)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ammonia">Ammonia</SelectItem>
-                    <SelectItem value="yeast-extract">Yeast extract</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between">
-                  Carbon to nitrogen
-                  <span className="text-muted-foreground">{cnRatio.toFixed(1)}</span>
-                </span>
-                <Slider
-                  min={CN_BOUNDS.min}
-                  max={CN_BOUNDS.max}
-                  step={0.5}
-                  value={[cnRatio]}
-                  onValueChange={(value) => {
-                    const next = value[0];
-                    if (next !== undefined) setCnRatio(next);
-                  }}
-                />
-                <span className="text-muted-foreground text-xs">
-                  Training point is 8. A higher ratio leaves less nitrogen per sugar, so predicted protein falls.
-                </span>
-              </div>
-              {b.comparison && other ? (
-                <p className="text-sm">
-                  Versus {FEEDSTOCK_PARAMS[b.comparison.other].label}:{" "}
-                  {b.comparison.higher === "equal"
-                    ? "same published amino-acid row."
-                    : `coverage ${b.comparison.coverage.toFixed(2)} vs ${b.comparison.otherCoverage.toFixed(2)}.`}{" "}
-                  Model A: this run {forecast.kg.toFixed(1)} kg at ₹{run.msp}/kg,{" "}
-                  {FEEDSTOCK_PARAMS[b.comparison.other].label} {other.proteinKg.toFixed(1)} kg ({other.low.toFixed(1)}–
-                  {other.high.toFixed(1)}) at ₹{other.msp}/kg.
-                </p>
-              ) : null}
-            </div>
           </div>
         </aside>
       ) : null}
@@ -417,6 +299,99 @@ export function ProteinDesk() {
             </CardContent>
           </Card>
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center font-normal">
+              Sugar and amino acids
+              <Info text={INFO.feedstock} />
+            </CardTitle>
+            <CardDescription>The published yeast row for this sugar. The probes do not change it.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <Select value={feedstock} onValueChange={(value) => setFeedstock(value as FeedstockId)}>
+              <SelectTrigger className="w-full max-w-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {FEEDSTOCKS.map((item) => (
+                  <SelectItem key={item.id} value={item.id}>
+                    {item.label} · ₹{FEEDSTOCK_PARAMS[item.id].priceInrPerKgSugar}/kg sugar
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <ul className="flex flex-col gap-2">
+              {b.gramsPer100g.map((item) => (
+                <li key={item.key} className="grid grid-cols-[7rem_1fr_auto] items-center gap-2 text-xs">
+                  <span>{item.label}</span>
+                  <span className="relative h-1.5 overflow-hidden rounded-full bg-muted">
+                    <span
+                      className="block h-full bg-foreground"
+                      style={{ width: `${Math.min(100, (item.grams / 8) * 100)}%` }}
+                    />
+                    <span
+                      className="absolute top-0 h-full w-px bg-destructive"
+                      style={{ left: `${Math.min(100, (item.requirement / 8) * 100)}%` }}
+                    />
+                  </span>
+                  <span>
+                    {item.grams.toFixed(1)} / {item.requirement.toFixed(1)} g
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-muted-foreground text-xs">
+              <Info text={INFO.amino} /> Limiting amino acid: {b.limitingAminoAcid} (coverage {b.coverage.toFixed(2)}).
+              Digestibility is not measured on this batch. No published DIAAS score is on file. Source: {b.source}{" "}
+              {b.note} Requirement: WHO/FAO/UNU 2007.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="flex flex-col gap-1 text-sm">
+                Nitrogen
+                <Info text="Ammonia or yeast extract. Yeast extract raises the protein fraction of the cell. It is not a separate process story." />
+                <Select value={nitrogen} onValueChange={(value) => setNitrogen(value as Nitrogen)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ammonia">Ammonia</SelectItem>
+                    <SelectItem value="yeast-extract">Yeast extract</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-1 text-sm">
+                <span className="flex justify-between">
+                  Carbon to nitrogen
+                  <span className="text-muted-foreground">{cnRatio.toFixed(1)}</span>
+                </span>
+                <Slider
+                  min={CN_BOUNDS.min}
+                  max={CN_BOUNDS.max}
+                  step={0.5}
+                  value={[cnRatio]}
+                  onValueChange={(value) => {
+                    const next = value[0];
+                    if (next !== undefined) setCnRatio(next);
+                  }}
+                />
+                <span className="text-muted-foreground text-xs">
+                  Training point is 8. A higher ratio leaves less nitrogen per sugar, so predicted protein falls.
+                </span>
+              </div>
+            </div>
+            {b.comparison && other ? (
+              <p className="text-sm">
+                Versus {FEEDSTOCK_PARAMS[b.comparison.other].label}:{" "}
+                {b.comparison.higher === "equal"
+                  ? "same published amino-acid row."
+                  : `coverage ${b.comparison.coverage.toFixed(2)} vs ${b.comparison.otherCoverage.toFixed(2)}.`}{" "}
+                This run {forecast.kg.toFixed(1)} kg at ₹{run.msp}/kg, {FEEDSTOCK_PARAMS[b.comparison.other].label}{" "}
+                {other.proteinKg.toFixed(1)} kg ({other.low.toFixed(1)}–{other.high.toFixed(1)}) at ₹{other.msp}/kg.
+              </p>
+            ) : null}
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

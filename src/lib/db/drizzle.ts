@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 import * as schema from "./schema";
+import { databaseUrl } from "./url";
 
 // Lazy-initialize so the module can be imported at build time without a live DB.
 let _client: ReturnType<typeof postgres> | null = null;
@@ -9,12 +10,11 @@ let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
 function getClient() {
   if (!_client) {
-    // Neon's Vercel integration sets DATABASE_URL; POSTGRES_URL works too.
-    const url = process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
+    const url = databaseUrl();
     if (!url) {
-      throw new Error("POSTGRES_URL (or DATABASE_URL) environment variable is not set");
+      throw new Error("DATABASE_URL is not set. Use the Supabase transaction pooler URI.");
     }
-    // No prepared statements, so pooled serverless connections (Neon, Supabase, PgBouncer) work.
+    // No prepared statements, so Supabase's transaction pooler (and any PgBouncer) accepts the connection.
     _client = postgres(url, { prepare: false });
   }
   return _client;

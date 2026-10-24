@@ -1,9 +1,10 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 
 import { db } from "@/lib/db/drizzle";
 import { fermentationAnomalies, fermentationBatches, fermentationSamples } from "@/lib/db/schema";
+import { databaseUrl } from "@/lib/db/url";
 import type { Alarm } from "@/lib/fermentation/insights";
 import type { ProcessState, Setpoints } from "@/lib/fermentation/model";
 
@@ -21,7 +22,7 @@ export type SavedBatch = {
 };
 
 export async function saveFermentationBatch(batch: SavedBatch) {
-  if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) return { stored: false as const };
+  if (!databaseUrl()) return { stored: false as const };
   try {
     await db
       .insert(fermentationBatches)
@@ -61,6 +62,10 @@ export async function saveFermentationBatch(batch: SavedBatch) {
           substrate: row.substrate,
           co2: row.co2,
           product: row.product,
+          ethanol: row.ethanol,
+          contaminant: row.contaminant,
+          sugarFedKg: row.sugarFedKg,
+          energyKwh: row.energyKwh,
           volume: row.volume,
         })),
       );
@@ -71,6 +76,7 @@ export async function saveFermentationBatch(batch: SavedBatch) {
           id: `${batch.id}:${row.id}`,
           batchId: batch.id,
           parameter: row.parameter,
+          partId: row.partId,
           severity: row.severity,
           tMin: row.tMin,
           evidence: row.evidence,
@@ -81,7 +87,88 @@ export async function saveFermentationBatch(batch: SavedBatch) {
     }
     return { stored: true as const };
   } catch (error) {
-    console.warn("Fermentation batch stayed in the browser. Postgres did not accept it.", error);
+    console.warn("Fermentation batch stayed in the browser. Supabase did not accept it.", error);
     return { stored: false as const };
   }
+}
+
+export async function listFermentationBatches(): Promise<SavedBatch[]> {
+  if (!databaseUrl()) return [];
+  try {
+    const batches = await db.select().from(fermentationBatches).orderBy(desc(fermentationBatches.startedAt)).limit(24);
+    const ids = batches.map((batch) => batch.id);
+    if (ids.length === 0) return [];
+    const samples = await db.select().from(fermentationSamples).where(inArray(fermentationSamples.batchId, ids));
+    const alarms = await db.select().from(fermentationAnomalies).where(inArray(fermentationAnomalies.batchId, ids));
+    return batches.flatMap((batch) => {
+      const setpoints = readSetpoints(batch.setpoints);
+      if (!setpoints) return [];
+      return [
+        {
+          id: batch.id,
+          name: batch.name,
+          reactor: batch.reactor,
+          scenario: batch.scenario,
+          status: batch.status,
+          setpoints,
+          samples: samples
+            .filter((row) => row.batchId === batch.id)
+            .sort((a, b) => a.tMin - b.tMin)
+            .map((row) => ({
+              tMin: row.tMin,
+              ph: row.ph,
+              temperature: row.temperature,
+              dissolvedOxygen: row.dissolvedOxygen,
+              agitation: row.agitation,
+              aeration: row.aeration,
+              feedRate: row.feedRate,
+              biomass: row.biomass,
+              substrate: row.substrate,
+              co2: row.co2,
+              product: row.product,
+              ethanol: row.ethanol,
+              contaminant: row.contaminant,
+              sugarFedKg: row.sugarFedKg,
+              energyKwh: row.energyKwh,
+              volume: row.volume,
+            })),
+          alarms: alarms
+            .filter((row) => row.batchId === batch.id)
+            .map((row) => ({
+              id: row.id,
+              parameter: row.parameter,
+              partId: row.partId,
+              severity:
+                row.severity === "low" || row.severity === "medium" || row.severity === "high"
+                  ? row.severity
+                  : "medium",
+              tMin: row.tMin,
+              evidence: row.evidence,
+              reason: row.reason,
+              contaminationConfirmed: false as const,
+            })),
+          startedAt: batch.startedAt?.toISOString() ?? "",
+          finishedAt: batch.finishedAt?.toISOString() ?? null,
+        },
+      ];
+    });
+  } catch (error) {
+    console.warn("Finished runs stayed in the browser. Supabase did not answer.", error);
+    return [];
+  }
+}
+
+function readSetpoints(value: unknown): Setpoints | null {
+  if (!value || typeof value !== "object") return null;
+  const row = value as Partial<Setpoints>;
+  const keys = ["ph", "temperature", "agitation", "aeration", "feedRate", "dissolvedOxygen"] as const;
+  if (!keys.every((key) => typeof row[key] === "number")) return null;
+  return {
+    ph: row.ph ?? 0,
+    temperature: row.temperature ?? 0,
+    agitation: row.agitation ?? 0,
+    aeration: row.aeration ?? 0,
+    feedRate: row.feedRate ?? 0,
+    dissolvedOxygen: row.dissolvedOxygen ?? 0,
+  };
 }
