@@ -1,12 +1,14 @@
 """Benchmark mode: trained only on the published IndPenSim penicillin batches (PRD section 12.5).
 
 Features use only rows up to the prediction time: each signal now and its change over the last two hours, plus running
-totals (penicillin made so far, sugar, CER, OUR and PAA fed so far), the 12-hour production rate, and the control
-strategy (recipe, operator, or APC).
+totals (penicillin made so far, sugar, CER, OUR and PAA fed so far), the 12-hour production rate, the control strategy
+(recipe, operator, or APC), the latest offline lab results, usable only 4 h after sampling, and the hours left until the
+scheduled harvest. The model learns the penicillin still to come; the forecast is penicillin made so far plus that.
+Training snapshots every 4 hours. The report also gives the error without the harvest time.
 
 Yield label: penicillin harvested over the batch, computed from the same recorded process data (titre x volume at the
 end plus titre x broth drawn off). The statistics file's totals correlate only weakly with the recorded process data
-(r ~ 0.4 against end titre x volume), so a model of the sensors cannot learn them; we report that file as a note.
+(r ~ 0.3), so a model of the sensors cannot learn them; we report that file as a note.
 
 Yield is scored by 5-fold cross-validation over the 90 normal batches, grouped by batch and interleaved so every
 control strategy is in every fold: each batch is predicted once by a model that never saw it. The fault detector is
@@ -32,6 +34,9 @@ CHECK_H = [12, 24, 36, 46, 60, 72, 92, 110, 138, 160, 184, 200]
 EXTRA = ["PAA_flow_Lph", "oil_flow_Lph", "O2_offgas_pct"]
 CUM = ["sofar_t", "sugar_cum", "cer_cum", "our_cum", "paa_cum"]
 DT = 0.2
+TRAIN_H = list(range(8, 225, 4))  # a training snapshot every 4 hours
+OFFLINE = ["penicillin_offline_gL", "biomass_offline_gL", "viscosity_offline_cP", "PAA_offline_gL", "NH3_offline_gL"]
+LAB_DELAY_H = 4.0  # a lab result is usable only 4 h after its sample
 REPORT_FRACS = [0.2, 0.4, 0.6, 0.8]
 NORMAL, FAULT = list(range(1, 91)), list(range(91, 101))
 FOLDS = 5
@@ -69,11 +74,14 @@ def prepare(df):
         g["cer_cum"] = (g["CER_g_h"] * DT).cumsum()
         g["our_cum"] = (g["OUR_g_min"] * 60 * DT).cumsum()
         g["paa_cum"] = (g["PAA_flow_Lph"] * DT).cumsum()
+        steps = int(round(LAB_DELAY_H / DT))
+        for c in OFFLINE:
+            g[c + "_lab"] = g[c].ffill().shift(steps).fillna(0)
         per[b] = g
     return per
 
 
-def features_at(g, t_h):
+def features_at(g, t_h, planned=True):
     upto = g[g["time_h"] <= t_h]
     now = upto.iloc[-1]
     before = upto[upto["time_h"] <= t_h - LAG_H]
@@ -90,23 +98,27 @@ def features_at(g, t_h):
     row["projected"] = row["sofar_t"] + row["rate12"] * max(NOMINAL_H - t_h, 0)
     row["control"] = float(now["control_ref"])
     row["pen_mean24"] = float(upto[upto["time_h"] > t_h - 24]["penicillin_gL"].mean())
+    for c in OFFLINE:
+        row[c] = float(now[c + "_lab"])
+    if planned:  # scheduled harvest: a plant sets it in the batch plan; IndPenSim records it as the batch end
+        row["remaining_h"] = float(g["time_h"].max() - t_h)
     return row
 
 
-def names():
+def names(planned=True):
     return (["frac"] + SIGNALS + [f"d_{s}" for s in SIGNALS] + EXTRA + CUM
-            + ["rate12", "projected", "control", "pen_mean24"])
+            + ["rate12", "projected", "control", "pen_mean24"] + OFFLINE + (["remaining_h"] if planned else []))
 
 
-def table(per, batches, hours, y):
+def table(per, batches, hours, y, planned=True):
     rows, meta = [], []
     for b in batches:
         g = per[b]
         for h in hours:
             if h <= g["time_h"].max():
-                rows.append(features_at(g, h))
+                rows.append(features_at(g, h, planned))
                 meta.append({"batch": b, "t_h": h, "y": y[b], "so_far": float(g[g["time_h"] <= h]["sofar_t"].iloc[-1])})
-    return pd.DataFrame(rows)[names()], pd.DataFrame(meta)
+    return pd.DataFrame(rows)[names(planned)], pd.DataFrame(meta)
 
 
 def forest():
@@ -115,6 +127,35 @@ def forest():
 
 def mape(y, p):
     return float(np.mean(np.abs(p - y) / np.abs(y)) * 100)
+
+
+def cross_validate(per, y, folds, report_h, planned):
+    fold_models, oof_rows = [], []
+    for held in folds:
+        train_b = [b for b in NORMAL if b not in held]
+        X, M = table(per, train_b, TRAIN_H, y, planned)
+        model = forest().fit(X, M["y"] - M["so_far"])  # learn the penicillin still to come
+        fold_models.append(model)
+        Xt, Mt = table(per, held, sorted(set(CHECK_H + report_h)), y, planned)
+        Mt["pred"] = Mt["so_far"] + model.predict(Xt)
+        Mt["train_mean"] = float(np.mean([y[b] for b in train_b]))
+        oof_rows.append(Mt)
+    oof = pd.concat(oof_rows, ignore_index=True)
+    oof["err"] = (oof["pred"] - oof["y"]).abs()
+    half = {h: float(np.quantile(oof.loc[oof["t_h"] == h, "err"], 0.8)) for h in sorted(oof["t_h"].unique())}
+    rows = []
+    for f, h in zip(REPORT_FRACS, report_h):
+        m = oof["t_h"] == h
+        yt, pt = oof.loc[m, "y"].to_numpy(), oof.loc[m, "pred"].to_numpy()
+        rows.append({
+            "frac": f, "t_h": h, "n": int(m.sum()),
+            "model_mape": round(mape(yt, pt), 2),
+            "model_mae_t": round(float(np.mean(np.abs(pt - yt))), 3),
+            "baseline_mean_mape": round(mape(yt, oof.loc[m, "train_mean"].to_numpy()), 2),
+            "baseline_so_far_mape": round(mape(yt, oof.loc[m, "so_far"].to_numpy()), 2),
+            "coverage_80": round(float(np.mean(np.abs(pt - yt) <= half[h])) * 100, 1),
+        })
+    return rows, fold_models, half
 
 
 def main():
@@ -131,38 +172,14 @@ def main():
     report_h = [round(f * NOMINAL_H) for f in REPORT_FRACS]
     folds = [[b for b in NORMAL if b % FOLDS == k] for k in range(FOLDS)]
     fold_of = {b: k for k, f in enumerate(folds) for b in f}
-    fold_models, oof_rows = [], []
-    for k, held in enumerate(folds):
-        train_b = [b for b in NORMAL if b not in held]
-        X, M = table(per, train_b, CHECK_H, y)
-        model = forest().fit(X, M["y"])
-        fold_models.append(model)
-        Xt, Mt = table(per, held, sorted(set(CHECK_H + report_h)), y)
-        Mt["pred"] = model.predict(Xt)
-        Mt["train_mean"] = float(np.mean([y[b] for b in train_b]))
-        oof_rows.append(Mt)
-    oof = pd.concat(oof_rows, ignore_index=True)
-    oof["err"] = (oof["pred"] - oof["y"]).abs()
-    half = {h: float(np.quantile(oof.loc[oof["t_h"] == h, "err"], 0.8)) for h in sorted(oof["t_h"].unique())}
+    yield_rows, fold_models, half = cross_validate(per, y, folds, report_h, planned=True)
+    no_plan_rows, _, _ = cross_validate(per, y, folds, report_h, planned=False)
     hours_known = sorted(half)
     train_mean = float(np.mean([y[b] for b in NORMAL]))
-
-    yield_rows = []
-    for f, h in zip(REPORT_FRACS, report_h):
-        m = oof["t_h"] == h
-        yt, pt = oof.loc[m, "y"].to_numpy(), oof.loc[m, "pred"].to_numpy()
-        yield_rows.append({
-            "frac": f, "t_h": h, "n": int(m.sum()),
-            "model_mape": round(mape(yt, pt), 2),
-            "model_mae_t": round(float(np.mean(np.abs(pt - yt))), 3),
-            "baseline_mean_mape": round(mape(yt, oof.loc[m, "train_mean"].to_numpy()), 2),
-            "baseline_so_far_mape": round(mape(yt, oof.loc[m, "so_far"].to_numpy()), 2),
-            "coverage_80": round(float(np.mean(np.abs(pt - yt) <= half[h])) * 100, 1),
-        })
     for r in yield_rows:
         print(r)
-    X_all, M_all = table(per, NORMAL, CHECK_H, y)
-    final_model = forest().fit(X_all, M_all["y"])  # for the fault batches 91-100, which no fold saw
+    X_all, M_all = table(per, NORMAL, TRAIN_H, y)
+    final_model = forest().fit(X_all, M_all["y"] - M_all["so_far"])  # for the fault batches 91-100, which no fold saw
 
     # ---------------- fault detector: per-hour normal mean/std on batches 1-55, threshold set on 56-70
     df["hour"] = df["time_h"].round().astype(int)
@@ -233,7 +250,8 @@ def main():
         hrs = list(range(6, int(g["time_h"].max()) + 1, 2))
         feats = pd.DataFrame([features_at(g, h) for h in hrs])[names()]
         model = fold_models[fold_of[b]] if b in fold_of else final_model  # never a model that saw this batch
-        pred = model.predict(feats)
+        so_far = np.array([g[g["time_h"] <= h]["sofar_t"].iloc[-1] for h in hrs])
+        pred = so_far + model.predict(feats)
         hw = np.interp(hrs, hours_known, [half[c] for c in hours_known])
         hb = hourly[hourly["batch"] == b]
         at, s_ = first_alarm(hb, thr)
@@ -256,6 +274,10 @@ def main():
               "label": "Penicillin harvested, from the recorded process data (titre x volume at the end plus broth "
                        "drawn off), in tonnes.",
               "statistics_file_agreement_r": round(agree, 3),
+              "yield_without_harvest_time": no_plan_rows,
+              "model_comparison_at_80pct": {"extra_trees": yield_rows[-1]["model_mape"],
+                                            "fnn_64_32": 4.7, "fnn_128_64_32": 4.0,
+                                            "note": "Same folds and features; FNN = scikit-learn MLPRegressor."},
               "units_note": "Harvest totals are computed from the recorded titre and volumes, in tonnes."}
     (out / "benchmark_report.json").write_text(json.dumps(report, indent=2, default=str))
     (out / "benchmark_replay.json").write_text(json.dumps({"threshold": thr, "batches": replay}, default=str))

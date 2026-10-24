@@ -53,6 +53,8 @@ const REPORT = reportJson as unknown as {
     normal_test_batches: number;
   };
   units_note: string;
+  yield_without_harvest_time: YieldRow[];
+  model_comparison_at_80pct: { extra_trees: number; fnn_64_32: number; fnn_128_64_32: number };
 };
 
 const LABEL: Record<number, string> = {
@@ -216,6 +218,9 @@ export function BenchmarkView() {
             <CardDescription>
               Trained only on IndPenSim. 5-fold cross-validation over batches 1–90: each row scores 90 batches, each
               predicted by a model that never saw it. Label: penicillin harvested, from the recorded titre and volumes.
+              Inputs include the scheduled harvest time; without it, the error at 80% is{" "}
+              {REPORT.yield_without_harvest_time.at(-1)?.model_mape.toFixed(1)}%. A neural network with the same inputs
+              and folds scored {REPORT.model_comparison_at_80pct.fnn_128_64_32.toFixed(1)}%.
             </CardDescription>
           </CardHeader>
           <CardContent>
