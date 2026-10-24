@@ -16,7 +16,7 @@ This document is the build contract. A screen, model, or sentence that is not de
 
 Fermentation outcomes depend on many interacting parameters (oxygen, pH, temperature, feed rate, agitation), yet runs are often managed with fixed settings or operator experience. Batches are lost to drift or contamination, and energy is wasted. Separately, substrates picked on price or protein then fail on yield or supply.
 
-Teams choose one of two angles. This product takes angle (a), process intelligence:
+Process intelligence:
 
 A tool that learns from several process parameters during a run (dissolved oxygen, pH, temperature, agitation, aeration, feed rate, biomass, off-gas CO₂) to:
 

@@ -26,7 +26,7 @@ import { downloadCsv, type StoredBatch, useFermentation, usePrediction } from "@
 
 import { PageHeader } from "../page-header";
 import { AminoWheel, MoneyWheel, RunKpis, RunMeters } from "./board";
-import { AlarmList, BatchControls, ReadingGrid, SensorCards, useActiveAlarms, YieldCard } from "./panels";
+import { AlarmList, BatchDock, ReadingGrid, SensorCards, useActiveAlarms, YieldCard } from "./panels";
 import { ProteinDesk } from "./protein-panel";
 import { ReactorView } from "./reactor-view";
 import { ArcMeter, KpiTile, Ring } from "./rings";
@@ -191,7 +191,7 @@ export function RunsView() {
   const alarms = useActiveAlarms();
   const scenario = SCENARIOS.find((item) => item.id === live.scenario);
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pb-14">
       <PageHeader
         title={`${live.reactor} · ${live.name}`}
         description="This is the latest run, the one still open. Each finished run has its own page from History."
@@ -220,24 +220,22 @@ export function RunsView() {
         </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <BatchControls />
-        <div className="flex flex-col gap-4">
-          <YieldCard />
-          <Card>
-            <CardHeader>
-              <CardTitle>Active deviations</CardTitle>
-              <CardDescription>
-                {alarms.length} rule{alarms.length === 1 ? "" : "s"} firing now.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AlarmList items={alarms} />
-            </CardContent>
-          </Card>
-        </div>
+        <YieldCard />
+        <Card>
+          <CardHeader>
+            <CardTitle>Active deviations</CardTitle>
+            <CardDescription>
+              {alarms.length} rule{alarms.length === 1 ? "" : "s"} firing now.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AlarmList items={alarms} />
+          </CardContent>
+        </Card>
       </div>
       <ReadingGrid />
       <ProteinDesk />
+      <BatchDock />
     </div>
   );
 }

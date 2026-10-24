@@ -7,7 +7,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 
 import { Button } from "@/components/ui/button";
 import { modelAlarms } from "@/lib/fermentation/insights";
-import type { ProcessState } from "@/lib/fermentation/model";
+import type { ProcessState, Setpoints } from "@/lib/fermentation/model";
 import { useFermentation } from "@/stores/fermentation-store";
 
 const CALLOUTS = [
@@ -58,6 +58,7 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
   const selected = useFermentation((s) => s.selectedPart);
   const dissect = useFermentation((s) => s.dissect);
   const state = useFermentation((s) => s.live.state);
+  const setpoints = useFermentation((s) => s.live.setpoints);
   const status = useFermentation((s) => s.live.status);
   const samples = useFermentation((s) => s.live.samples);
   const sensitivity = useFermentation((s) => s.sensitivity);
@@ -199,6 +200,14 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
     const brothHigh = new THREE.Color(0xb98a4e);
     const ringOk = new THREE.Color(0x2dd4bf);
     const ringBad = new THREE.Color(0xef4444);
+    const coolJacket = new THREE.Color(0x2563eb);
+    const hotJacket = new THREE.Color(0xea580c);
+    const acidColor = new THREE.Color(0xf59e0b);
+    const goldColor = new THREE.Color(0xf5b700);
+    const baseColor = new THREE.Color(0x818cf8);
+    const coolGlow = new THREE.Color(0x7dd3fc);
+    const warmGlow = new THREE.Color(0xff8a3d);
+    const shown = { agitation: 350, aeration: 1.2, feedRate: 0.35, temperature: 30, ph: 5, dissolvedOxygen: 30 };
     const ledColors: Record<string, number> = {
       running: 0x22c55e,
       paused: 0xf59e0b,
@@ -239,12 +248,23 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
         group.position.lerp(open ? target : built.zero, 0.08);
       }
 
+      // Actuators follow the knobs immediately. A finished batch otherwise keeps the last reading.
+      const replay = readingsRef.current !== undefined;
+      const knobs = store.live.setpoints;
+      const ease = 1 - Math.exp(-8 * dt);
+      shown.agitation += ((replay ? s.agitation : knobs.agitation) - shown.agitation) * ease;
+      shown.aeration += ((replay ? s.aeration : knobs.aeration) - shown.aeration) * ease;
+      shown.feedRate += ((replay ? s.feedRate : knobs.feedRate) - shown.feedRate) * ease;
+      shown.temperature += ((replay ? s.temperature : knobs.temperature) - shown.temperature) * ease;
+      shown.ph += ((replay ? s.ph : knobs.ph) - shown.ph) * ease;
+      shown.dissolvedOxygen += ((replay ? s.dissolvedOxygen : knobs.dissolvedOxygen) - shown.dissolvedOxygen) * ease;
+
       // Impellers turn at the agitation speed (slowed for the eye; full speed would blur).
-      spin += (s.agitation / 60) * dt * Math.PI * 2 * 0.35;
+      spin += (shown.agitation / 60) * dt * Math.PI * 2 * 0.35;
       built.spin.rotation.y = spin;
       built.motorFan.rotation.y = spin * 1.5;
 
-      // Broth level follows volume; colour follows biomass.
+      // Broth level follows volume; colour follows biomass, then the pH and temperature knobs.
       const fill = THREE.MathUtils.clamp((s.volume - 600) / 1000, 0.42, 0.93);
       const surfaceY = BOTTOM + H * fill;
       built.liquid.scale.y = fill;
@@ -253,12 +273,45 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
       built.brothMarker.position.y = surfaceY - 0.08;
       const biomassT = THREE.MathUtils.clamp(s.biomass / 24, 0, 1);
       built.brothMaterial.color.copy(brothLow).lerp(brothHigh, biomassT);
+      if (!replay) {
+        const warmth = THREE.MathUtils.clamp((shown.temperature - 30) / 12, -1, 1);
+        const phTint = THREE.MathUtils.clamp((5 - shown.ph) / 1.5, -1, 1);
+        built.brothMaterial.color.offsetHSL(warmth * 0.04 + phTint * -0.08, Math.abs(phTint) * 0.22, warmth * -0.08);
+      }
       built.surfaceMaterial.color.copy(built.brothMaterial.color).offsetHSL(0, 0, 0.06);
       built.bottomBroth.material = built.brothMaterial;
-      glow.intensity = 0.4 + biomassT * 0.9;
+      const tempT = THREE.MathUtils.clamp((shown.temperature - 25) / 11, 0, 1);
+      glow.color.copy(coolGlow).lerp(warmGlow, tempT);
+      glow.intensity = 0.35 + biomassT * 0.7 + (replay ? 0 : tempT * 0.55);
+      for (const material of built.jackets) {
+        material.emissive.copy(coolJacket).lerp(hotJacket, tempT);
+        material.emissiveIntensity = replay ? 0 : 0.2 + tempT * 1.3;
+      }
+      paintProbe(
+        built.probes["ph:head"],
+        acidColor,
+        goldColor,
+        baseColor,
+        THREE.MathUtils.clamp((shown.ph - 4) / 2.5, 0, 1),
+      );
+      const tempMat = built.probes["temperature:head"];
+      if (tempMat) {
+        tempMat.emissive.copy(coolJacket).lerp(hotJacket, tempT);
+        tempMat.emissiveIntensity = 0.45 + tempT * 1.2;
+      }
+      const doHead = built.probes["dissolvedOxygen:head"];
+      if (doHead) {
+        doHead.emissive.setHex(0x22c55e);
+        doHead.emissiveIntensity = 0.2 + THREE.MathUtils.clamp(shown.dissolvedOxygen / 60, 0, 1) * 1.6;
+      }
+      const doTip = built.probes["dissolvedOxygen:tip"];
+      if (doTip) {
+        doTip.emissive.setHex(0x22c55e);
+        doTip.emissiveIntensity = 0.15 + THREE.MathUtils.clamp(s.dissolvedOxygen / 60, 0, 1) * 1.8;
+      }
 
       // Swirl and vortex on the surface, deeper with agitation.
-      const swirl = THREE.MathUtils.clamp(s.agitation / 600, 0.1, 1);
+      const swirl = THREE.MathUtils.clamp(shown.agitation / 600, 0.1, 1);
       const pos = built.surface.geometry.attributes.position as THREE.BufferAttribute;
       for (let i = 0; i < pos.count; i++) {
         const x = built.surfaceBase[i * 2] ?? 0;
@@ -272,11 +325,15 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
       pos.needsUpdate = true;
       built.surface.geometry.computeVertexNormals();
       built.foam.position.y = surfaceY + 0.006;
-      (built.foam.material as THREE.MeshStandardMaterial).opacity = THREE.MathUtils.clamp(s.aeration / 2.2, 0.1, 0.75);
+      (built.foam.material as THREE.MeshStandardMaterial).opacity = THREE.MathUtils.clamp(
+        (shown.aeration - 0.2) / 1.8,
+        0.04,
+        0.9,
+      );
 
       // Bubbles: how many and how fast follow aeration.
-      const active = Math.round(THREE.MathUtils.clamp(s.aeration / 2.2, 0.08, 1) * MAX_BUBBLES);
-      const rise = 0.35 + s.aeration * 0.35;
+      const active = Math.round(THREE.MathUtils.clamp(shown.aeration / 2.2, 0.08, 1) * MAX_BUBBLES);
+      const rise = 0.35 + shown.aeration * 0.45;
       for (let i = 0; i < MAX_BUBBLES; i++) {
         const b = built.bubbleState[i];
         if (!b) continue;
@@ -290,7 +347,7 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
         const swirlAngle = b.angle + (b.y - BOTTOM) * swirl * 1.4;
         const spread = b.radius + (b.y - BOTTOM) * 0.12;
         dummy.position.set(Math.cos(swirlAngle) * spread + wobble, b.y, Math.sin(swirlAngle) * spread);
-        const size = b.size * (0.7 + (b.y - BOTTOM) / H);
+        const size = b.size * (0.45 + shown.aeration * 0.55) * (0.7 + (b.y - BOTTOM) / H);
         dummy.scale.setScalar(i < active ? size : 0.0001);
         dummy.updateMatrix();
         built.bubbles.setMatrixAt(i, dummy.matrix);
@@ -312,12 +369,13 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
       built.cells.instanceMatrix.needsUpdate = true;
 
       // Feed drops: fall from the inlet at a rate set by the feed pump.
-      const dropEvery = 1.6 / Math.max(0.05, s.feedRate * 4);
+      const dropEvery = 1.6 / Math.max(0.05, shown.feedRate * 4);
       for (let i = 0; i < MAX_DROPS; i++) {
         const phase = (((t / dropEvery + i / MAX_DROPS) % 1) + 1) % 1;
         const y = TOP - 0.02 - phase * (TOP - surfaceY);
         dummy.position.set(built.inlet.x, y, built.inlet.z);
-        dummy.scale.setScalar(s.feedRate > 0.02 && i < Math.ceil(s.feedRate * 8) ? 1 : 0.0001);
+        const dropScale = shown.feedRate > 0.02 && i < Math.ceil(shown.feedRate * 8) ? 0.7 + shown.feedRate : 0.0001;
+        dummy.scale.setScalar(dropScale);
         dummy.updateMatrix();
         built.drops.setMatrixAt(i, dummy.matrix);
       }
@@ -357,6 +415,7 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
         hot,
         layout,
         readingsRef.current,
+        replay ? undefined : knobs,
       );
     };
     loop();
@@ -445,7 +504,7 @@ export function ReactorView({ readings }: { readings?: Partial<Record<string, st
         <div className="max-w-80 rounded-lg border border-white/15 bg-slate-950/80 px-3 py-2 text-center backdrop-blur-sm">
           <div className="font-medium text-[13px] text-white">{part ? part.label : "Bioreactor BR-101"}</div>
           <div className="text-[11px] text-slate-300">
-            {calloutCaption(part?.id, state, readings)}
+            {calloutCaption(part?.id, state, readings, readings ? undefined : setpoints)}
             {part && hotParts.has(part.id) ? " This part is outside its normal band." : ""}
           </div>
         </div>
@@ -465,6 +524,7 @@ function paintCallouts(
   hot: Set<string>,
   layout: Map<number, number>,
   readings?: Partial<Record<string, string>>,
+  knobs?: Setpoints,
 ) {
   if (!svg) return;
   while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -512,7 +572,7 @@ function paintCallouts(
       chip.style.top = `${y}px`;
       chip.style.transform = side === "left" ? "translate(0, -50%)" : "translate(-100%, -50%)";
       const value = chip.querySelector<HTMLElement>("[data-value]");
-      const text = readings?.[callout.id] ?? reading(callout.id, state);
+      const text = readings?.[callout.id] ?? reading(callout.id, state, knobs);
       if (value && value.textContent !== text) value.textContent = text;
 
       const chipWidth = chip.offsetWidth || 110;
@@ -545,23 +605,48 @@ function paintCallouts(
   }
 }
 
-function calloutCaption(id: string | undefined, state: ProcessState, readings?: Partial<Record<string, string>>) {
+function calloutCaption(
+  id: string | undefined,
+  state: ProcessState,
+  readings?: Partial<Record<string, string>>,
+  knobs?: Setpoints,
+) {
   if (!id) {
     return readings
       ? "Penicillin, IndPenSim. This is not the yeast protein run."
       : "Drag to rotate · Ctrl/⌘ + scroll to zoom · Click a part";
   }
-  const value = readings?.[id] ?? reading(id, state);
+  const value = readings?.[id] ?? reading(id, state, knobs);
   return readings ? value : `${value} · ${COPY[id as CalloutId]}`;
 }
 
-function reading(id: string, state: ProcessState) {
-  if (id === "ph") return state.ph.toFixed(2);
-  if (id === "temperature") return `${state.temperature.toFixed(1)} °C`;
+function reading(id: string, state: ProcessState, knobs?: Setpoints) {
+  if (id === "ph") {
+    if (knobs && Math.abs(knobs.ph - state.ph) >= 0.05) return `set ${knobs.ph.toFixed(2)}`;
+    return state.ph.toFixed(2);
+  }
+  if (id === "temperature") {
+    if (knobs && Math.abs(knobs.temperature - state.temperature) >= 0.2)
+      return `set ${knobs.temperature.toFixed(1)} °C`;
+    return `${state.temperature.toFixed(1)} °C`;
+  }
   if (id === "dissolvedOxygen") return `${state.dissolvedOxygen.toFixed(1)} %`;
-  if (id === "impeller" || id === "motor") return `${state.agitation.toFixed(0)} rpm`;
-  if (id === "sparger") return `${state.aeration.toFixed(2)} vvm`;
+  if (id === "impeller" || id === "motor") return `${(knobs?.agitation ?? state.agitation).toFixed(0)} rpm`;
+  if (id === "sparger") return `${(knobs?.aeration ?? state.aeration).toFixed(2)} vvm`;
   return `${state.volume.toFixed(0)} L · ${state.biomass.toFixed(1)} g/L yeast`;
+}
+
+function paintProbe(
+  material: THREE.MeshStandardMaterial | undefined,
+  low: THREE.Color,
+  mid: THREE.Color,
+  high: THREE.Color,
+  t: number,
+) {
+  if (!material) return;
+  if (t < 0.4) material.emissive.copy(low).lerp(mid, t / 0.4);
+  else material.emissive.copy(mid).lerp(high, (t - 0.4) / 0.6);
+  material.emissiveIntensity = 0.85;
 }
 
 // ---------------------------------------------------------------- model
@@ -633,6 +718,7 @@ function buildReactor() {
     const band = mesh(new THREE.TorusGeometry(R + 0.012, y === 0.1 || y === -0.45 ? 0.012 : 0.03, 12, 72), steel(0.3));
     band.rotation.x = Math.PI / 2;
     band.position.y = y;
+    if (y === 0.1 || y === -0.45) band.userData.jacket = true;
     frame.add(band);
   }
   const legRing = mesh(new THREE.TorusGeometry(R * 0.85, 0.03, 10, 48), steel(0.35));
@@ -903,6 +989,16 @@ function buildReactor() {
     }
   });
 
+  const probes: Record<string, THREE.MeshStandardMaterial> = {};
+  const jackets: THREE.MeshStandardMaterial[] = [];
+  root.traverse((node) => {
+    if (!(node instanceof THREE.Mesh)) return;
+    if (typeof node.userData.probeRole === "string" && node.material instanceof THREE.MeshStandardMaterial) {
+      probes[node.userData.probeRole] = node.material;
+    }
+    if (node.userData.jacket && node.material instanceof THREE.MeshStandardMaterial) jackets.push(node.material);
+  });
+
   return {
     root,
     stage,
@@ -927,6 +1023,8 @@ function buildReactor() {
     cellState,
     drops,
     inlet,
+    probes,
+    jackets,
   };
 }
 
@@ -942,9 +1040,13 @@ function addProbe(
   group.add(tube([port.clone().setY(TOP + 0.12), tip], 0.022, steel(0.2)));
   const sensor = mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.1, 16), plastic(color));
   sensor.position.copy(tip);
+  sensor.userData.probeRole = `${id}:tip`;
+  sensor.userData.keepEmissive = true;
   group.add(sensor);
   const head = mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.14, 20), plastic(color));
   head.position.set(port.x, TOP + 0.2, port.z);
+  head.userData.probeRole = `${id}:head`;
+  head.userData.keepEmissive = true;
   group.add(head);
   group.add(
     tube(
