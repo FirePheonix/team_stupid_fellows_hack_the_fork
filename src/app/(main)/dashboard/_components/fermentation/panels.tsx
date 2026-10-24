@@ -464,7 +464,8 @@ export function YieldCard() {
       <CardHeader>
         <CardTitle>Predicted final protein</CardTitle>
         <CardDescription>
-          Predicted from the run model (Model A, gradient-boosted trees trained on held-out-tested yeast batches).
+          Predicted from the run model (Model A, gradient-boosted trees trained on simulated yeast batches). Verified
+          accuracy, on published data, is on Benchmark.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 text-sm">

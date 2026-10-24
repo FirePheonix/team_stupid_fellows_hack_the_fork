@@ -3,46 +3,46 @@
     {
       "frac": 0.2,
       "t_h": 46,
-      "n": 20,
-      "model_mape": 13.9,
-      "model_mae_t": 0.498,
-      "baseline_mean_mape": 13.25,
-      "baseline_so_far_mape": 93.48,
-      "coverage_80": 95.0
+      "n": 90,
+      "model_mape": 21.63,
+      "model_mae_t": 0.512,
+      "baseline_mean_mape": 28.44,
+      "baseline_so_far_mape": 92.03,
+      "coverage_80": 80.0
     },
     {
       "frac": 0.4,
       "t_h": 92,
-      "n": 20,
-      "model_mape": 17.82,
-      "model_mae_t": 0.632,
-      "baseline_mean_mape": 13.25,
-      "baseline_so_far_mape": 69.02,
-      "coverage_80": 95.0
+      "n": 90,
+      "model_mape": 15.2,
+      "model_mae_t": 0.391,
+      "baseline_mean_mape": 28.44,
+      "baseline_so_far_mape": 62.21,
+      "coverage_80": 80.0
     },
     {
       "frac": 0.6,
       "t_h": 138,
-      "n": 20,
-      "model_mape": 14.0,
-      "model_mae_t": 0.501,
-      "baseline_mean_mape": 13.25,
-      "baseline_so_far_mape": 42.93,
-      "coverage_80": 95.0
+      "n": 90,
+      "model_mape": 8.95,
+      "model_mae_t": 0.249,
+      "baseline_mean_mape": 28.44,
+      "baseline_so_far_mape": 32.87,
+      "coverage_80": 80.0
     },
     {
       "frac": 0.8,
       "t_h": 184,
-      "n": 20,
-      "model_mape": 11.78,
-      "model_mae_t": 0.425,
-      "baseline_mean_mape": 13.25,
-      "baseline_so_far_mape": 19.94,
-      "coverage_80": 95.0
+      "n": 87,
+      "model_mape": 1.98,
+      "model_mae_t": 0.065,
+      "baseline_mean_mape": 28.91,
+      "baseline_so_far_mape": 14.43,
+      "coverage_80": 79.3
     }
   ],
   "fault": {
-    "threshold": 3.7572022033396415,
+    "threshold": 3.7572022033396313,
     "false_alarm_batches_pct": 10.0,
     "normal_test_batches": 20,
     "detection_pct": 90.0,
@@ -54,7 +54,7 @@
         "alarm_h": 21.0,
         "detected": true,
         "delay_h": 1.0,
-        "total_t": 2.597
+        "total_t": 0.535
       },
       {
         "batch": 92,
@@ -62,7 +62,7 @@
         "alarm_h": 148.0,
         "detected": true,
         "delay_h": 68.0,
-        "total_t": 1.753
+        "total_t": 2.215
       },
       {
         "batch": 93,
@@ -70,7 +70,7 @@
         "alarm_h": null,
         "detected": false,
         "delay_h": null,
-        "total_t": 4.448
+        "total_t": 3.551
       },
       {
         "batch": 94,
@@ -78,7 +78,7 @@
         "alarm_h": 21.0,
         "detected": true,
         "delay_h": 1.0,
-        "total_t": 3.584
+        "total_t": 0.906
       },
       {
         "batch": 95,
@@ -86,7 +86,7 @@
         "alarm_h": 21.0,
         "detected": true,
         "delay_h": 1.0,
-        "total_t": 1.954
+        "total_t": 0.773
       },
       {
         "batch": 96,
@@ -94,7 +94,7 @@
         "alarm_h": 190.0,
         "detected": true,
         "delay_h": 120.0,
-        "total_t": 3.595
+        "total_t": 2.631
       },
       {
         "batch": 97,
@@ -102,7 +102,7 @@
         "alarm_h": 21.0,
         "detected": true,
         "delay_h": 1.0,
-        "total_t": 3.894
+        "total_t": 2.123
       },
       {
         "batch": 98,
@@ -110,7 +110,7 @@
         "alarm_h": 150.0,
         "detected": true,
         "delay_h": 70.0,
-        "total_t": 1.731
+        "total_t": 3.713
       },
       {
         "batch": 99,
@@ -118,7 +118,7 @@
         "alarm_h": 21.0,
         "detected": true,
         "delay_h": 1.0,
-        "total_t": 0.891
+        "total_t": 0.912
       },
       {
         "batch": 100,
@@ -126,11 +126,62 @@
         "alarm_h": 21.0,
         "detected": true,
         "delay_h": 1.0,
-        "total_t": 1.555
+        "total_t": 0.839
       }
     ]
   },
-  "train_mean_t": 2.9741242857142858,
-  "threshold": 3.7572022033396415,
-  "units_note": "Statistics file says kg; magnitudes match grams, so totals are shown in tonnes."
+  "train_mean_t": 3.003035253946667,
+  "threshold": 3.7572022033396313,
+  "evaluation": "5-fold cross-validation over normal batches 1-90, grouped by batch; each batch is predicted once by a model that never saw it.",
+  "label": "Penicillin harvested, from the recorded process data (titre x volume at the end plus broth drawn off), in tonnes.",
+  "statistics_file_agreement_r": 0.264,
+  "yield_without_harvest_time": [
+    {
+      "frac": 0.2,
+      "t_h": 46,
+      "n": 90,
+      "model_mape": 21.15,
+      "model_mae_t": 0.507,
+      "baseline_mean_mape": 28.44,
+      "baseline_so_far_mape": 92.03,
+      "coverage_80": 80.0
+    },
+    {
+      "frac": 0.4,
+      "t_h": 92,
+      "n": 90,
+      "model_mape": 16.31,
+      "model_mae_t": 0.43,
+      "baseline_mean_mape": 28.44,
+      "baseline_so_far_mape": 62.21,
+      "coverage_80": 80.0
+    },
+    {
+      "frac": 0.6,
+      "t_h": 138,
+      "n": 90,
+      "model_mape": 10.67,
+      "model_mae_t": 0.307,
+      "baseline_mean_mape": 28.44,
+      "baseline_so_far_mape": 32.87,
+      "coverage_80": 80.0
+    },
+    {
+      "frac": 0.8,
+      "t_h": 184,
+      "n": 87,
+      "model_mape": 4.18,
+      "model_mae_t": 0.139,
+      "baseline_mean_mape": 28.91,
+      "baseline_so_far_mape": 14.43,
+      "coverage_80": 79.3
+    }
+  ],
+  "model_comparison_at_80pct": {
+    "extra_trees": 1.98,
+    "fnn_64_32": 4.7,
+    "fnn_128_64_32": 4.0,
+    "note": "Same folds and features; FNN = scikit-learn MLPRegressor."
+  },
+  "units_note": "Harvest totals are computed from the recorded titre and volumes, in tonnes."
 }

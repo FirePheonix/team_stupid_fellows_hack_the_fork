@@ -2,10 +2,11 @@
  * Impact: what one yeast run means for food, climate, land, and waste, mapped to the UN Sustainable Development Goals.
  *
  * Every factor is a published average, not a measurement from this vessel. Protein, sugar, and electricity come from
- * the run (Model A's forecast and the calculated feed and power walked to the end of the batch).
+ * the run (Model A's forecast and the calculated feed and power walked to the end of the batch). Model performance is
+ * quoted only from the published IndPenSim dataset (benchmark-report.json), never from simulated batches.
  */
-import { type FeedstockId, initialState, project, proteinKgOf, type Setpoints } from "@/lib/fermentation/model";
-import reportJson from "@/lib/fermentation/model-a-report.json";
+import benchmarkJson from "@/lib/fermentation/benchmark-report.json";
+import type { FeedstockId } from "@/lib/fermentation/model";
 import type { ModelB, RunEconomics } from "@/lib/fermentation/protein";
 
 /** Poore & Nemecek (2018), Science 360:987, global means for 2010, via Our World in Data. */
@@ -76,36 +77,37 @@ export type Impact = {
   lysinePct: number;
   completeProtein: boolean;
   lowestAmino: { label: string; pct: number };
-  oxygenFault: { lostPct: number; lostKg: number; detectionPct: number; delayMin: number };
+  verified: VerifiedModel;
   sideStream: (typeof SIDE_STREAM)[FeedstockId];
 };
 
 const BEEF = PROTEIN_FOOTPRINTS[0] as (typeof PROTEIN_FOOTPRINTS)[number];
 const POULTRY = PROTEIN_FOOTPRINTS.find((row) => row.food === "Poultry meat") as (typeof PROTEIN_FOOTPRINTS)[number];
 
-const lossCache = new Map<string, number>();
+export type VerifiedModel = {
+  /** Yield forecast error, % of harvest, at 80% of the batch, on IndPenSim batches the model never saw. */
+  yieldErrorPct: number;
+  faultsCaughtPct: number;
+  medianDelayH: number | null;
+  falseAlarmPct: number;
+  /** How much less faulty IndPenSim batches (91-100) harvested than the normal mean (1-90). */
+  faultHarvestLossPct: number;
+};
 
-/** Share of the batch's protein that an undetected oxygen shortfall costs, at these settings and this feedstock. */
-export function oxygenLossFraction(setpoints: Setpoints, feedstock: FeedstockId): number {
-  const key = `${feedstock}|${Object.values(setpoints).join(",")}`;
-  const cached = lossCache.get(key);
-  if (cached !== undefined) return cached;
-  const end = (scenario: "stable" | "oxygen-limitation") =>
-    proteinKgOf(project(initialState(setpoints, feedstock), setpoints, scenario, undefined, feedstock));
-  const stable = end("stable");
-  const loss = stable > 0 ? Math.max(0, 1 - end("oxygen-limitation") / stable) : 0;
-  if (lossCache.size > 64) lossCache.clear();
-  lossCache.set(key, loss);
-  return loss;
-}
+export const VERIFIED: VerifiedModel = (() => {
+  const late = benchmarkJson.yield.at(-1);
+  const faultTotals = benchmarkJson.fault.fault_batches.map((row) => row.total_t);
+  const faultMean = faultTotals.reduce((sum, value) => sum + value, 0) / Math.max(faultTotals.length, 1);
+  return {
+    yieldErrorPct: late?.model_mape ?? 0,
+    faultsCaughtPct: benchmarkJson.fault.detection_pct,
+    medianDelayH: benchmarkJson.fault.median_delay_h,
+    falseAlarmPct: benchmarkJson.fault.false_alarm_batches_pct,
+    faultHarvestLossPct: (1 - faultMean / benchmarkJson.train_mean_t) * 100,
+  };
+})();
 
-export function impactOf(
-  run: RunEconomics,
-  b: ModelB,
-  feedstock: FeedstockId,
-  setpoints: Setpoints,
-  scale = 1,
-): Impact {
+export function impactOf(run: RunEconomics, b: ModelB, feedstock: FeedstockId, scale = 1): Impact {
   const proteinKg = Math.max(run.proteinKg, 0.05);
   const co2Sugar = run.sugarKg * SUGAR_CO2_PER_KG;
   const co2Power = run.energyKwh * GRID_CO2_PER_KWH;
@@ -118,8 +120,6 @@ export function impactOf(
     { label: "", pct: Number.POSITIVE_INFINITY },
   );
   const lysine = b.gramsPer100g.find((row) => row.key === "lys");
-  const o2 = reportJson.fault.by_scenario["oxygen-limitation"];
-  const lostPct = oxygenLossFraction(setpoints, feedstock);
   return {
     proteinKg: proteinKg * scale,
     personDays: (proteinKg * 1000 * scale) / PROTEIN_G_PER_PERSON_DAY,
@@ -137,12 +137,7 @@ export function impactOf(
     lysinePct: lysine ? (lysine.grams / lysine.requirement) * 100 : 0,
     completeProtein: b.available && lowest.pct >= 1,
     lowestAmino: { label: lowest.label, pct: Number.isFinite(lowest.pct) ? lowest.pct * 100 : 0 },
-    oxygenFault: {
-      lostPct: lostPct * 100,
-      lostKg: lostPct * proteinKg * scale,
-      detectionPct: o2.detection_pct,
-      delayMin: o2.median_delay_min,
-    },
+    verified: VERIFIED,
     sideStream: SIDE_STREAM[feedstock],
   };
 }

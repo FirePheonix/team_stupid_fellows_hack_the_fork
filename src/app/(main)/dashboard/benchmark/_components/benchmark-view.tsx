@@ -53,6 +53,8 @@ const REPORT = reportJson as unknown as {
     normal_test_batches: number;
   };
   units_note: string;
+  yield_without_harvest_time: YieldRow[];
+  model_comparison_at_80pct: { extra_trees: number; fnn_64_32: number; fnn_128_64_32: number };
 };
 
 const LABEL: Record<number, string> = {
@@ -86,7 +88,7 @@ export function BenchmarkView() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Benchmark"
-        description="Penicillin, IndPenSim. This is not the yeast protein run. Model A's recipe with separate weights, trained on batches 1–70 and replayed on held-out batches."
+        description="Penicillin, IndPenSim. This is not the yeast protein run. Trained only on this published dataset. Each replay is predicted by a model that never saw that batch."
         actions={
           <a className="text-sm underline" href="/dashboard/runs">
             Yeast mode
@@ -121,7 +123,7 @@ export function BenchmarkView() {
         <Ring
           value={Math.min(1, (batch.faultScore[i] ?? 0) / Math.max(REPLAY.threshold * 2, 0.01))}
           label={(batch.faultScore[i] ?? 0).toFixed(1)}
-          caption={`Fault score · threshold ${REPLAY.threshold}`}
+          caption={`Fault score · threshold ${REPLAY.threshold.toFixed(2)}`}
           tone={alarmed ? "var(--destructive)" : "var(--chart-4)"}
         />
       </div>
@@ -212,10 +214,13 @@ export function BenchmarkView() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Yield on held-out batches 71–90</CardTitle>
+            <CardTitle>Yield, every normal batch held out once</CardTitle>
             <CardDescription>
-              Label: total penicillin from the statistics file, as the PRD specifies. The model does not beat the
-              training-mean baseline on this label; it is shown, not hidden.
+              Trained only on IndPenSim. 5-fold cross-validation over batches 1–90: each row scores 90 batches, each
+              predicted by a model that never saw it. Label: penicillin harvested, from the recorded titre and volumes.
+              Inputs include the scheduled harvest time; without it, the error at 80% is{" "}
+              {REPORT.yield_without_harvest_time.at(-1)?.model_mape.toFixed(1)}%. A neural network with the same inputs
+              and folds scored {REPORT.model_comparison_at_80pct.fnn_128_64_32.toFixed(1)}%.
             </CardDescription>
           </CardHeader>
           <CardContent>

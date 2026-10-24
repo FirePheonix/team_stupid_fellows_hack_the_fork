@@ -194,7 +194,7 @@ export function RunsView() {
     <div className="flex flex-col gap-4 pb-14">
       <PageHeader
         title={`${live.reactor} · ${live.name}`}
-        description="This is the latest run, the one still open. Each finished run has its own page from History."
+        description="Yeast digital twin: a simulation for what-if questions, not a measured plant. Verified model accuracy is on Benchmark (IndPenSim)."
         actions={
           <>
             <Badge variant="outline">Yeast mode · simulated</Badge>
