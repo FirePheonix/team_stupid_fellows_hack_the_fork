@@ -32,6 +32,7 @@ export function ProteinDesk() {
   const [lastRun, setLastRun] = useState<{ json: RunJson; source: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [paragraph, setParagraph] = useState<{ text: string; source: string } | null>(null);
+  const [narrate, setNarrate] = useState(false);
 
   const forecast = forecastProtein(live.samples, live.setpoints, feedstock);
   const fault = readFault(live.samples, sensitivity);
@@ -66,10 +67,18 @@ export function ProteinDesk() {
   });
   const template = templateParagraph(packet);
 
-  // Re-ask the agent only after a turn; between turns the template tracks the live numbers.
+  // After a turn, write the paragraph from the packet of the render that already has the new settings applied.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs once per turn, on the packet of that render
   useEffect(() => {
-    if (!lastRun) setParagraph(null);
-  }, [lastRun]);
+    if (!narrate) return;
+    setNarrate(false);
+    void writeParagraph(packet)
+      .catch(() => null)
+      .then((reply) => {
+        setParagraph(reply);
+        setBusy(false);
+      });
+  }, [narrate]);
 
   function applyRun(next: RunJson) {
     if (next.feedstock !== feedstock) setFeedstock(next.feedstock);
@@ -95,9 +104,8 @@ export function ProteinDesk() {
         if (chosen) applyCandidate(chosen.setpoints);
       } else if (json.intent !== "compare") applyRun(json);
     }
-    const reply = await writeParagraph(packet).catch(() => null);
-    setParagraph(reply);
-    setBusy(false);
+    setParagraph(null);
+    setNarrate(true);
   }
 
   function applyCandidate(setpoints: typeof live.setpoints) {

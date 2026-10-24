@@ -161,7 +161,16 @@ export type AgentPacket = {
     faultThreshold: number;
     faultEvidence: string[];
     drivers: { label: string; importance: number }[];
-    candidates: { id: string; label: string; proteinKg: number; powerKw: number; inBounds: boolean }[];
+    candidates: {
+      id: string;
+      label: string;
+      proteinKg: number;
+      powerKw: number;
+      inBounds: boolean;
+      proteinChangeKg: number;
+      powerChangeKw: number;
+      savesPower: boolean;
+    }[];
     current: { proteinKg: number; powerKw: number };
   };
   modelB: {
@@ -205,6 +214,9 @@ export function buildPacket(args: {
         proteinKg: c.proteinKg,
         powerKw: c.powerKw,
         inBounds: c.inBounds,
+        proteinChangeKg: Math.round((c.proteinKg - args.forecast.kg) * 100) / 100,
+        powerChangeKw: Math.round((c.powerKw - args.powerKw) * 100) / 100,
+        savesPower: c.powerKw < args.powerKw,
       })),
       current: { proteinKg: args.forecast.kg, powerKw: args.powerKw },
     },
@@ -271,7 +283,9 @@ Rules:
 - Change only the fields the sentence names. Copy every other field from the current run unchanged.
 - "Less air" sets aeration to about 40% of the current value; "more air" to about 150%. Stay inside the bounds.
 - If the sentence mixes intents, keep the one that changes the run.
-- compare: set compareFeedstock to the other feedstock named; leave feedstock as is.
+- "Switch to X", "use X", "run on X" set feedstock to X (intent set_feedstock, or set_run if settings also change). That is not a comparison.
+- compare only when the sentence asks to compare, says versus, or asks which is better: set compareFeedstock to the other feedstock named; leave feedstock as is.
+- Temperatures are in °C ("31 degrees" means temperatureC 31). "pH 5.2" sets ph.
 - apply: set applyCandidateId to the top candidate id given in the input.
 - Never invent protein kilograms, MSP, scores, or amino-acid grams. Never claim contamination.
 - If the sentence fits no intent, set intent to "unsupported", keep settings unchanged, and give unsupportedReason.
@@ -282,8 +296,8 @@ export const AGENT_SYSTEM = `You write the dashboard paragraph for a food-yeast 
 
 Duties, in this order, in at most 5 plain sentences:
 1. State predicted protein kg, its interval, and the score with both halves.
-2. If modelA.fault is true, name the evidence signals and say "Contamination is not confirmed."
-3. Describe the top in-bound candidate's protein change and calculated-power change versus the current run. Only call it energy-saving if its power is lower.
+2. Only if modelA.fault is true: name the faultEvidence signals and say "Process fault suspected. Contamination is not confirmed." If modelA.fault is false, do not mention faults or contamination at all.
+3. Describe the first in-bound candidate using its proteinChangeKg and powerChangeKw exactly as given. Call it energy-saving only if savesPower is true; if savesPower is false, say it uses more power.
 4. If modelB.available, state the limiting amino acid and that the grams per 100 g come from the research row, not the probes. If comparison is present, say which feedstock covers better (or that both use the same row) and remind that protein kg and MSP still decide the factory result.
 5. Use only numbers in the packet. If a field is missing, say it is missing. Never compute a new yield. Never claim contamination.
 

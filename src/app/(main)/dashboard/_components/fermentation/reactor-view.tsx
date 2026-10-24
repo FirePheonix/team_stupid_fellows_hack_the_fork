@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import * as THREE from "three";
 
@@ -35,6 +35,7 @@ const LIQUID_H = 1.35;
 
 export function ReactorView() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [noGl, setNoGl] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const selected = useFermentation((s) => s.selectedPart);
@@ -50,7 +51,14 @@ export function ReactorView() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    } catch {
+      // Browsers with WebGL off (some kiosk or remote sessions) get a note instead of a crashed dashboard.
+      setNoGl(true);
+      return;
+    }
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.setClearColor(0xf7f6f3, 1);
     const scene = new THREE.Scene();
@@ -184,6 +192,11 @@ export function ReactorView() {
   return (
     <div className="relative h-[460px] w-full overflow-hidden rounded-lg border bg-[#f7f6f3]">
       <canvas ref={canvasRef} className="block h-full w-full cursor-grab touch-none active:cursor-grabbing" />
+      {noGl ? (
+        <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-muted-foreground text-sm">
+          The 3D vessel needs WebGL, which this browser has turned off. Sensor cards and models keep working.
+        </p>
+      ) : null}
       <svg
         ref={svgRef}
         className="pointer-events-none absolute inset-0 z-[4] overflow-visible"
