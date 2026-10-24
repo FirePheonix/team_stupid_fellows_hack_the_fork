@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
-import { CloudOff, Leaf, Sprout, Users } from "lucide-react";
+import { Beef, CloudOff, type LucideIcon, Recycle, Sprout, Timer, Users, Wheat } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts";
 
 import { Badge } from "@/components/ui/badge";
@@ -34,15 +34,17 @@ const chartConfig = {
 
 const YEAST_ROW = "Yeast (this run)";
 
-/** Official UN SDG colours. */
-const SDG_COLOR = {
-  2: "#DDA63A",
-  7: "#FCC30B",
-  9: "#FD6925",
-  12: "#BF8B2E",
-  13: "#3F7E44",
-  15: "#56C02B",
+/** UN SDG colours, nearest Tailwind palette shades. */
+const SDG_STYLE = {
+  2: { tile: "bg-amber-500", edge: "border-t-amber-500" },
+  7: { tile: "bg-yellow-400", edge: "border-t-yellow-400" },
+  9: { tile: "bg-orange-500", edge: "border-t-orange-500" },
+  12: { tile: "bg-amber-700", edge: "border-t-amber-700" },
+  13: { tile: "bg-green-700", edge: "border-t-green-700" },
+  15: { tile: "bg-lime-500", edge: "border-t-lime-500" },
 } as const;
+
+const BAR_FILL = { yeast: "var(--color-green-600)", plant: "var(--color-lime-500)", animal: "var(--muted-foreground)" };
 
 export function ImpactView() {
   const snap = useRunSnapshot();
@@ -55,15 +57,16 @@ export function ImpactView() {
   const per = scale === "plant" ? "a year" : "this batch";
 
   const rows = [
-    ...PROTEIN_FOOTPRINTS.map((row) => ({ food: row.food, value: row[metric] })),
-    { food: YEAST_ROW, value: metric === "co2" ? impact.co2Per100g : impact.landPer100g },
+    ...PROTEIN_FOOTPRINTS.map((row) => ({ food: row.food, kind: row.kind, value: row[metric] })),
+    { food: YEAST_ROW, kind: "yeast" as const, value: metric === "co2" ? impact.co2Per100g : impact.landPer100g },
   ].sort((a, b) => b.value - a.value);
+  const beefTimes = Math.round(49.89 / Math.max(impact.co2Per100g, 0.01));
 
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Impact"
-        description="What the live BR-101 run means for people, climate, and land, mapped to the UN Sustainable Development Goals."
+        description="How much animal protein this run can replace, and what that saves in climate, land, and waste. Mapped to the UN Sustainable Development Goals."
         actions={
           <ToggleGroup
             type="single"
@@ -84,23 +87,37 @@ export function ImpactView() {
         </p>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiTile
-          icon={Users}
-          label="Daily protein need met"
-          value={scale === "plant" ? `${people(impact.personDays / 365)} people` : `${people(impact.personDays)} days`}
-          note={
-            scale === "plant"
-              ? `fed their full protein need all year from ${tonnes(impact.proteinKg)} protein.`
-              : `of one adult's protein from ${impact.proteinKg.toFixed(1)} kg, at 54 g a day.`
-          }
-        />
-        <KpiTile
-          icon={Leaf}
-          label="Climate footprint"
-          value={`${impact.co2Per100g.toFixed(1)} kg`}
-          note="CO₂e per 100 g protein. Beef 49.9, chicken 5.7, tofu 2.0."
-        />
+      <Card className="border-green-600/40 bg-green-600/5">
+        <CardContent className="grid gap-6 md:grid-cols-[1.1fr_1fr] md:items-center">
+          <div className="flex flex-col gap-2">
+            <Badge variant="secondary" className="w-fit gap-1">
+              <Beef className="size-3.5" /> Animal-free protein
+            </Badge>
+            <div className="font-semibold text-4xl tabular-nums tracking-tight md:text-5xl">
+              {weight(impact.beefReplacedKg)} of beef
+            </div>
+            <p className="text-muted-foreground">
+              replaced by the protein from {per}, with no animal raised. The same protein as{" "}
+              {weight(impact.chickenReplacedKg)} of chicken, at {beefTimes}× less CO₂e than beef.
+            </p>
+          </div>
+          <ul className="flex flex-col gap-3 text-sm">
+            <Point icon={Wheat} title="Works with plant protein">
+              Yeast is rich in lysine ({impact.lysinePct.toFixed(0)}% of the WHO need), the amino acid wheat and rice
+              are short of, so it lifts plant-based diets and products instead of competing with them.
+            </Point>
+            <Point icon={Recycle} title="Runs on plant-protein leftovers">
+              Pea starch, left over when pea protein is made, is one of our sugar feeds. Plant-protein plants get a
+              second protein out of the same crop.
+            </Point>
+            <Point icon={Timer} title="Hours, not years">
+              A batch takes 10 hours in a tank, all year round. A beef animal takes 18 months or more.
+            </Point>
+          </ul>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <KpiTile
           icon={CloudOff}
           label="CO₂e avoided vs beef"
@@ -113,6 +130,16 @@ export function ImpactView() {
           value={area(impact.sparedLandVsBeefM2)}
           note={`of farmland for the same protein, ${per}.`}
         />
+        <KpiTile
+          icon={Users}
+          label="Daily protein need met"
+          value={scale === "plant" ? `${people(impact.personDays / 365)} people` : `${people(impact.personDays)} days`}
+          note={
+            scale === "plant"
+              ? `fed their full protein need all year from ${tonnes(impact.proteinKg)} protein.`
+              : `of one adult's protein from ${impact.proteinKg.toFixed(1)} kg, at 54 g a day.`
+          }
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -121,29 +148,29 @@ export function ImpactView() {
           name="Zero hunger"
           targets={["2.1", "2.4"]}
           value={impact.completeProtein ? "Complete protein" : `${impact.lowestAmino.pct.toFixed(0)}% coverage`}
-          text={`Every essential amino acid meets the WHO adult pattern; the lowest, ${impact.lowestAmino.label}, sits at ${impact.lowestAmino.pct.toFixed(0)}%. Grown in a tank in 10 hours, with no harvest season.`}
-        />
-        <SdgCard
-          goal={12}
-          name="Responsible production"
-          targets={["12.3", "12.5"]}
-          value={`${kg(impact.oxygenFault.lostKg)} protected`}
-          text={`An unnoticed oxygen shortfall costs ${impact.oxygenFault.lostPct.toFixed(0)}% of the protein ${per === "a year" ? "per faulty batch" : "here"}. The detector caught ${impact.oxygenFault.detectionPct}% of held-out oxygen faults, median ${impact.oxygenFault.delayMin} min after onset. ${impact.sideStream.note}`}
-          badge={impact.sideStream.sideStream ? "Side-stream sugar" : undefined}
+          text={`Like meat, it carries every essential amino acid at or above the WHO adult pattern; the lowest, ${impact.lowestAmino.label}, sits at ${impact.lowestAmino.pct.toFixed(0)}%.`}
         />
         <SdgCard
           goal={13}
           name="Climate action"
           targets={[]}
-          value={`${impact.co2PerKg.toFixed(1)} kg CO₂e / kg`}
-          text={`Sugar ${pct(impact.co2Sugar, impact.co2Sugar + impact.co2Power)} and electricity ${pct(impact.co2Power, impact.co2Sugar + impact.co2Power)} of the footprint. Every feedstock is charged as cane sugar, so molasses and pea starch are overstated.`}
+          value={`${impact.co2Per100g.toFixed(1)} kg CO₂e / 100 g`}
+          text={`Beef 49.9, chicken 5.7, eggs 4.2, tofu 2.0. Sugar ${pct(impact.co2Sugar, impact.co2Sugar + impact.co2Power)} and electricity ${pct(impact.co2Power, impact.co2Sugar + impact.co2Power)} of ours; every feed is charged as cane sugar, so this is a high estimate.`}
         />
         <SdgCard
           goal={15}
           name="Life on land"
           targets={[]}
           value={`${impact.landPer100g.toFixed(2)} m² / 100 g`}
-          text="The only land is the sugar crop. Beef herds need 164 m² for the same 100 g of protein, peas 3.4 m²."
+          text="The only land is the sugar crop. Beef herds need 164 m² for the same 100 g of protein: land that could go back to forest."
+        />
+        <SdgCard
+          goal={12}
+          name="Responsible production"
+          targets={["12.3", "12.5"]}
+          value={`${kg(impact.oxygenFault.lostKg)} protected`}
+          text={`An unnoticed oxygen shortfall costs ${impact.oxygenFault.lostPct.toFixed(0)}% of the protein ${per === "a year" ? "per faulty batch" : "here"}. The detector caught ${impact.oxygenFault.detectionPct}% of held-out oxygen faults, median ${impact.oxygenFault.delayMin} min after onset.`}
+          badge={impact.sideStream.sideStream ? "Side-stream sugar" : undefined}
         />
         <SdgCard
           goal={7}
@@ -164,9 +191,10 @@ export function ImpactView() {
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-2">
           <div className="flex flex-col gap-1.5">
-            <CardTitle>Footprint per 100 g protein</CardTitle>
+            <CardTitle>Animal protein vs animal-free protein</CardTitle>
             <CardDescription>
-              {metric === "co2" ? "kg CO₂e" : "m² of land"}. Global means, except the yeast row, which is this run.
+              {metric === "co2" ? "kg CO₂e" : "m² of land"} per 100 g protein. Grey: animal. Light green: plant. Green:
+              our yeast, this run.
             </CardDescription>
           </div>
           <Tabs value={metric} onValueChange={(value) => setMetric(value as "co2" | "land")}>
@@ -185,11 +213,7 @@ export function ImpactView() {
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
               <Bar dataKey="value" radius={4}>
                 {rows.map((row) => (
-                  <Cell
-                    key={row.food}
-                    fill={row.food === YEAST_ROW ? SDG_COLOR[13] : "var(--muted-foreground)"}
-                    fillOpacity={row.food === YEAST_ROW ? 1 : 0.45}
-                  />
+                  <Cell key={row.food} fill={BAR_FILL[row.kind]} fillOpacity={row.kind === "animal" ? 0.45 : 1} />
                 ))}
                 <LabelList
                   dataKey="value"
@@ -205,13 +229,29 @@ export function ImpactView() {
       </Card>
 
       <ul className="flex flex-col gap-1 text-muted-foreground text-xs">
-        <li>{FOOTPRINT_SOURCE}</li>
+        <li>
+          {FOOTPRINT_SOURCE} Meat replaced uses the protein content implied by the same dataset (beef 20%, chicken 17%).
+        </li>
         <li>Electricity: {GRID_SOURCE} 0.716 kg CO₂ per kWh.</li>
         <li>{RDA_SOURCE}</li>
         <li>Amino acids: {AMINO_SOURCE}</li>
         <li>Fault detection and yield error: held-out batches in FermaTwin's Model A report.</li>
       </ul>
     </div>
+  );
+}
+
+function Point({ icon: Icon, title, children }: { icon: LucideIcon; title: string; children: ReactNode }) {
+  return (
+    <li className="flex gap-3">
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-background text-green-600">
+        <Icon className="size-4" />
+      </div>
+      <div className="flex flex-col gap-0.5">
+        <span className="font-medium">{title}</span>
+        <span className="text-muted-foreground">{children}</span>
+      </div>
+    </li>
   );
 }
 
@@ -223,7 +263,7 @@ function SdgCard({
   text,
   badge,
 }: {
-  goal: keyof typeof SDG_COLOR;
+  goal: keyof typeof SDG_STYLE;
   name: string;
   targets: string[];
   value: string;
@@ -231,11 +271,10 @@ function SdgCard({
   badge?: string;
 }) {
   return (
-    <Card className="overflow-hidden border-t-4" style={{ borderTopColor: SDG_COLOR[goal] }}>
+    <Card className={`overflow-hidden border-t-4 ${SDG_STYLE[goal].edge}`}>
       <CardHeader className="flex flex-row items-center gap-3">
         <div
-          className="flex size-11 shrink-0 items-center justify-center rounded-md font-semibold text-lg text-white"
-          style={{ backgroundColor: SDG_COLOR[goal] }}
+          className={`flex size-11 shrink-0 items-center justify-center rounded-md font-semibold text-lg text-white ${SDG_STYLE[goal].tile}`}
         >
           {goal}
         </div>
@@ -267,6 +306,10 @@ function SdgCard({
 
 function people(value: number) {
   return Math.round(value).toLocaleString("en-US");
+}
+
+function weight(valueKg: number) {
+  return valueKg >= 1000 ? tonnes(valueKg) : `${Math.round(valueKg)} kg`;
 }
 
 function kg(value: number) {

@@ -13,17 +13,24 @@ export const FOOTPRINT_SOURCE =
   "Poore J, Nemecek T (2018). Reducing food's environmental impacts through producers and consumers. Science 360(6392):987-992. Global means, via Our World in Data.";
 
 /** kg CO2e and m² of land per 100 g protein. */
-export const PROTEIN_FOOTPRINTS: { food: string; co2: number; land: number }[] = [
-  { food: "Beef (beef herd)", co2: 49.89, land: 163.6 },
-  { food: "Lamb & mutton", co2: 19.85, land: 184.81 },
-  { food: "Cheese", co2: 10.82, land: 39.76 },
-  { food: "Milk", co2: 9.5, land: 27.12 },
-  { food: "Pig meat", co2: 7.61, land: 10.73 },
-  { food: "Poultry meat", co2: 5.7, land: 7.06 },
-  { food: "Eggs", co2: 4.21, land: 5.65 },
-  { food: "Tofu", co2: 1.98, land: 2.2 },
-  { food: "Peas", co2: 0.44, land: 3.36 },
+export const PROTEIN_FOOTPRINTS: { food: string; kind: "animal" | "plant"; co2: number; land: number }[] = [
+  { food: "Beef (beef herd)", kind: "animal", co2: 49.89, land: 163.6 },
+  { food: "Lamb & mutton", kind: "animal", co2: 19.85, land: 184.81 },
+  { food: "Cheese", kind: "animal", co2: 10.82, land: 39.76 },
+  { food: "Milk", kind: "animal", co2: 9.5, land: 27.12 },
+  { food: "Pig meat", kind: "animal", co2: 7.61, land: 10.73 },
+  { food: "Poultry meat", kind: "animal", co2: 5.7, land: 7.06 },
+  { food: "Eggs", kind: "animal", co2: 4.21, land: 5.65 },
+  { food: "Tofu", kind: "plant", co2: 1.98, land: 2.2 },
+  { food: "Peas", kind: "plant", co2: 0.44, land: 3.36 },
 ];
+
+/**
+ * Protein per kg of meat implied by the same dataset (kg CO2e per kg food over kg CO2e per 100 g protein):
+ * beef 99.48 / 49.89 -> 19.9%, poultry 9.87 / 5.70 -> 17.3%.
+ */
+const BEEF_PROTEIN_FRACTION = 99.48 / 49.89 / 10;
+const CHICKEN_PROTEIN_FRACTION = 9.87 / 5.7 / 10;
 
 /** Cane sugar, per kg: 3.2 kg CO2e and 2.04 m² (same source). Charged to every feedstock, so side streams are overstated. */
 const SUGAR_CO2_PER_KG = 3.2;
@@ -64,6 +71,9 @@ export type Impact = {
   avoidedCo2VsPoultryKg: number;
   sparedLandVsBeefM2: number;
   kwhPerKgProtein: number;
+  beefReplacedKg: number;
+  chickenReplacedKg: number;
+  lysinePct: number;
   completeProtein: boolean;
   lowestAmino: { label: string; pct: number };
   oxygenFault: { lostPct: number; lostKg: number; detectionPct: number; delayMin: number };
@@ -107,6 +117,7 @@ export function impactOf(
       row.grams / row.requirement < low.pct ? { label: row.label, pct: row.grams / row.requirement } : low,
     { label: "", pct: Number.POSITIVE_INFINITY },
   );
+  const lysine = b.gramsPer100g.find((row) => row.key === "lys");
   const o2 = reportJson.fault.by_scenario["oxygen-limitation"];
   const lostPct = oxygenLossFraction(setpoints, feedstock);
   return {
@@ -121,6 +132,9 @@ export function impactOf(
     avoidedCo2VsPoultryKg: hundreds * (POULTRY.co2 - co2PerKg / 10),
     sparedLandVsBeefM2: hundreds * (BEEF.land - landPerKg / 10),
     kwhPerKgProtein: run.energyKwh / proteinKg,
+    beefReplacedKg: (proteinKg * scale) / BEEF_PROTEIN_FRACTION,
+    chickenReplacedKg: (proteinKg * scale) / CHICKEN_PROTEIN_FRACTION,
+    lysinePct: lysine ? (lysine.grams / lysine.requirement) * 100 : 0,
     completeProtein: b.available && lowest.pct >= 1,
     lowestAmino: { label: lowest.label, pct: Number.isFinite(lowest.pct) ? lowest.pct * 100 : 0 },
     oxygenFault: {
