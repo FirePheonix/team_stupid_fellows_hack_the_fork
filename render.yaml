@@ -1,0 +1,19 @@
+# Render Blueprint. Build does not run database migrations.
+# Paste supabase/fermentation.sql in the Supabase SQL editor instead.
+services:
+  - type: web
+    name: fermatwin
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: HUSKY
+        value: "0"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
