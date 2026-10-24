@@ -15,7 +15,7 @@ describe("impact", () => {
     "stable",
     feedstock,
   );
-  const impact = impactOf(run, modelB(feedstock), feedstock, DEFAULT_SETPOINTS);
+  const impact = impactOf(run, modelB(feedstock), feedstock);
 
   it("puts yeast protein below every animal protein for climate and land", () => {
     for (const row of PROTEIN_FOOTPRINTS.filter((r) => !["Tofu", "Peas"].includes(r.food))) {
@@ -24,14 +24,16 @@ describe("impact", () => {
     }
   });
 
-  it("reports a complete protein and a real oxygen-fault loss", () => {
+  it("reports a complete protein and quotes model figures from IndPenSim only", () => {
     expect(impact.completeProtein).toBe(true);
     expect(impact.lowestAmino.label).toBe("Met + Cys");
-    expect(impact.oxygenFault.lostPct).toBeGreaterThan(10);
+    expect(impact.verified.faultsCaughtPct).toBe(90);
+    expect(impact.verified.yieldErrorPct).toBeLessThan(5);
+    expect(impact.verified.faultHarvestLossPct).toBeGreaterThan(20);
   });
 
   it("scales absolute numbers, not per-100 g footprints, to the plant", () => {
-    const plant = impactOf(run, modelB(feedstock), feedstock, DEFAULT_SETPOINTS, PLANT_FACTOR);
+    const plant = impactOf(run, modelB(feedstock), feedstock, PLANT_FACTOR);
     expect(plant.personDays).toBeCloseTo(impact.personDays * PLANT_FACTOR, 3);
     expect(plant.co2Per100g).toBeCloseTo(impact.co2Per100g, 9);
   });

@@ -19,7 +19,6 @@ import {
   PROTEIN_FOOTPRINTS,
   RDA_SOURCE,
 } from "@/lib/fermentation/impact";
-import reportJson from "@/lib/fermentation/model-a-report.json";
 import { AMINO_SOURCE } from "@/lib/fermentation/protein";
 
 import { PageHeader } from "../page-header";
@@ -51,9 +50,7 @@ export function ImpactView() {
   const [scale, setScale] = useState<Scale>("batch");
   const [metric, setMetric] = useState<"co2" | "land">("co2");
   const factor = scale === "plant" ? PLANT_FACTOR : 1;
-  const { setpoints } = snap.live;
-  const impact = impactOf(snap.run, snap.pattern, snap.feedstock, setpoints, factor);
-  const late = reportJson.yield.find((row) => row.group === "held-out normal" && row.frac === 0.8);
+  const impact = impactOf(snap.run, snap.pattern, snap.feedstock, factor);
   const per = scale === "plant" ? "a year" : "this batch";
 
   const rows = [
@@ -168,8 +165,8 @@ export function ImpactView() {
           goal={12}
           name="Responsible production"
           targets={["12.3", "12.5"]}
-          value={`${kg(impact.oxygenFault.lostKg)} protected`}
-          text={`An unnoticed oxygen shortfall costs ${impact.oxygenFault.lostPct.toFixed(0)}% of the protein ${per === "a year" ? "per faulty batch" : "here"}. The detector caught ${impact.oxygenFault.detectionPct}% of held-out oxygen faults, median ${impact.oxygenFault.delayMin} min after onset.`}
+          value={`${impact.verified.faultsCaughtPct.toFixed(0)}% of faults caught`}
+          text={`On the published IndPenSim batches, faulty runs harvested ${impact.verified.faultHarvestLossPct.toFixed(0)}% less. The detector flagged ${impact.verified.faultsCaughtPct.toFixed(0)}% of them, median ${impact.verified.medianDelayH ?? "–"} h after the fault began, with ${impact.verified.falseAlarmPct.toFixed(0)}% false alarms on normal batches.`}
           badge={impact.sideStream.sideStream ? "Side-stream sugar" : undefined}
         />
         <SdgCard
@@ -183,8 +180,8 @@ export function ImpactView() {
           goal={9}
           name="Industry and innovation"
           targets={["9.4", "9.5"]}
-          value={late ? `${late.model_mape.toFixed(1)}% yield error` : "Digital twin"}
-          text="A digital twin with trained models forecasts protein and flags faults while the batch runs, so operators fix a run instead of discarding it."
+          value={`${impact.verified.yieldErrorPct.toFixed(1)}% yield error`}
+          text="Trained only on the published IndPenSim dataset: final harvest forecast at 80% of the batch, on batches the model never saw. Operators fix a run instead of discarding it."
         />
       </div>
 
@@ -235,7 +232,10 @@ export function ImpactView() {
         <li>Electricity: {GRID_SOURCE} 0.716 kg CO₂ per kWh.</li>
         <li>{RDA_SOURCE}</li>
         <li>Amino acids: {AMINO_SOURCE}</li>
-        <li>Fault detection and yield error: held-out batches in FermaTwin's Model A report.</li>
+        <li>
+          Model figures (SDG 9, SDG 12): IndPenSim, Goldrick et al., Mendeley Data pdnjz7zz5x v2, scored on batches the
+          model never saw. Footprints: the published factors above applied to this run's calculated sugar and power.
+        </li>
       </ul>
     </div>
   );
@@ -310,10 +310,6 @@ function people(value: number) {
 
 function weight(valueKg: number) {
   return valueKg >= 1000 ? tonnes(valueKg) : `${Math.round(valueKg)} kg`;
-}
-
-function kg(value: number) {
-  return value >= 1000 ? tonnes(value) : `${value.toFixed(1)} kg`;
 }
 
 function tonnes(valueKg: number) {
