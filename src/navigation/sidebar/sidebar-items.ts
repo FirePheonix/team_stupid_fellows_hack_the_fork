@@ -2,6 +2,7 @@ import {
   Bell,
   FlaskConical,
   Gauge,
+  Globe,
   LayoutDashboard,
   LineChart,
   type LucideIcon,
@@ -67,6 +68,7 @@ export const sidebarItems: NavGroup[] = [
       { id: "trends", title: "Trends", url: "/dashboard/trends", icon: LineChart },
       { id: "insights", title: "Insights", url: "/dashboard/insights", icon: Sparkles },
       { id: "benchmark", title: "Benchmark", url: "/dashboard/benchmark", icon: Gauge },
+      { id: "impact", title: "Impact", url: "/dashboard/impact", icon: Globe },
     ],
   },
   {
