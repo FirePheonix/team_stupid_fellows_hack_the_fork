@@ -42,8 +42,8 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link prefetch={false} href="/dashboard">
-                <Image src="/logo/icon.png" alt="" width={16} height={16} className="size-4" />
+              <Link prefetch={false} href="/" aria-label="FermaTwin home">
+                <Image src="/logo/icon.png" alt="" width={16} height={16} className="size-4 shrink-0" />
                 <span className="font-semibold text-base">{APP_CONFIG.name}</span>
               </Link>
             </SidebarMenuButton>
