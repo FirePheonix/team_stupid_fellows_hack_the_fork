@@ -88,7 +88,7 @@ export function BenchmarkView() {
         title="Benchmark"
         description="Penicillin, IndPenSim. This is not the yeast protein run. Model A's recipe with separate weights, trained on batches 1–70 and replayed on held-out batches."
         actions={
-          <a className="text-sm underline" href="/dashboard">
+          <a className="text-sm underline" href="/dashboard/runs">
             Yeast mode
           </a>
         }

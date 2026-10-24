@@ -2,7 +2,10 @@
 
 import { useMemo, useState } from "react";
 
-import { CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
+import Link from "next/link";
+
+import { Activity, Beaker, Bell, FlaskConical } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,15 +15,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { correlations, explainProcess } from "@/lib/fermentation/insights";
-import { type ProcessState, SCENARIOS, type SetpointKey } from "@/lib/fermentation/model";
-import { downloadCsv, useFermentation, usePrediction } from "@/stores/fermentation-store";
+import {
+  BATCH_MINUTES,
+  type ProcessState,
+  SCENARIOS,
+  type SetpointKey,
+  TARGET_YIELD_G_L,
+} from "@/lib/fermentation/model";
+import { downloadCsv, type StoredBatch, useFermentation, usePrediction } from "@/stores/fermentation-store";
 
 import { PageHeader } from "../page-header";
 import { AminoWheel, MoneyWheel, RunKpis, RunMeters } from "./board";
 import { AlarmList, BatchControls, ReadingGrid, SensorCards, useActiveAlarms, YieldCard } from "./panels";
 import { ProteinDesk } from "./protein-panel";
 import { ReactorView } from "./reactor-view";
-import { ArcMeter, Ring } from "./rings";
+import { ArcMeter, KpiTile, Ring } from "./rings";
 import { useRunSnapshot } from "./snapshot";
 
 const chartConfig = {
@@ -29,9 +38,155 @@ const chartConfig = {
   ph: { label: "pH", color: "var(--chart-3)" },
   temperature: { label: "Temperature", color: "var(--chart-4)" },
   compare: { label: "Other batch", color: "var(--chart-5)" },
+  ethanol: { label: "Ethanol g/L", color: "var(--chart-3)" },
+  delta: { label: "Protein change g/L", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
+export function runPath(id: string) {
+  return `/dashboard/runs/${encodeURIComponent(id)}`;
+}
+
 export function OverviewView() {
+  const history = useFermentation((s) => s.history);
+  const live = useFermentation((s) => s.live);
+  const [picked, setPicked] = useState(history[0]?.id ?? "");
+  const selected = history.find((batch) => batch.id === picked) ?? history[0];
+  const reports = history.map((batch) => summarize(batch));
+  const meanProtein = meanOf(reports.map((row) => row.product));
+  const meanEthanol = meanOf(reports.map((row) => row.ethanol));
+  const alarmCount = reports.reduce((sum, row) => sum + row.alarms, 0);
+  const alarmed = reports.filter((row) => row.alarms > 0).length;
+  const best = reports.reduce((top, row) => (row.product > top ? row.product : top), 0);
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        title="Run reports"
+        description="Finished batches on BR-101. Each report is the last sample of a stored run. The open batch stays on Live."
+        actions={
+          <a className="text-sm underline" href="/dashboard/runs">
+            Open the live batch
+          </a>
+        }
+      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiTile
+          icon={FlaskConical}
+          label="Stored runs"
+          value={String(reports.length)}
+          badge={live.status}
+          note="The badge is the batch that is still open, not one of these reports."
+        />
+        <KpiTile
+          icon={Beaker}
+          label="Mean end protein"
+          value={reports.length ? `${meanProtein.toFixed(2)} g/L` : "—"}
+          note={`Best stored end is ${best.toFixed(2)} g/L. The ${TARGET_YIELD_G_L} g/L line is a reference, not a forecast.`}
+        />
+        <KpiTile
+          icon={Activity}
+          label="Mean end ethanol"
+          value={reports.length ? `${meanEthanol.toFixed(2)} g/L` : "—"}
+          note="Ethanol at the last sample. Oxygen-short runs leave more of it."
+        />
+        <KpiTile
+          icon={Bell}
+          label="Alarm crossings"
+          value={String(alarmCount)}
+          badge={reports.length ? `${alarmed} of ${reports.length}` : "none"}
+          note="A crossing is not a confirmed contamination."
+        />
+      </div>
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+        <Card className="xl:col-span-7">
+          <CardHeader>
+            <CardTitle className="font-normal">End of each run</CardTitle>
+            <CardDescription>Protein and ethanol, grams per litre, from the last stored sample.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {reports.length === 0 ? (
+              <p className="text-muted-foreground text-sm">Finish a live batch and it will appear here.</p>
+            ) : (
+              <ChartContainer config={chartConfig} className="aspect-auto h-64">
+                <BarChart data={reports}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} />
+                  <YAxis />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ReferenceLine y={TARGET_YIELD_G_L} stroke="var(--foreground)" strokeDasharray="4 4" />
+                  <Bar dataKey="product" fill="var(--color-product)" radius={4} />
+                  <Bar dataKey="ethanol" fill="var(--color-ethanol)" radius={4} />
+                </BarChart>
+              </ChartContainer>
+            )}
+          </CardContent>
+        </Card>
+        <Card className="xl:col-span-5">
+          <CardHeader>
+            <CardTitle className="font-normal">How the set finished</CardTitle>
+            <CardDescription>Shares across the stored runs. Not a score of the open batch.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-3">
+            <Ring
+              value={reports.length ? alarmed / reports.length : 0}
+              label={reports.length ? `${Math.round((alarmed / reports.length) * 100)}%` : "—"}
+              caption="Had an alarm"
+              tone="var(--chart-4)"
+            />
+            <Ring
+              value={reports.length ? best / TARGET_YIELD_G_L : 0}
+              label={best.toFixed(1)}
+              caption={`Best g/L vs ${TARGET_YIELD_G_L}`}
+            />
+            <ArcMeter
+              value={reports.length ? Math.min(1, meanEthanol / 10) : 0}
+              label={meanEthanol.toFixed(1)}
+              caption="Mean ethanol g/L"
+              tone="var(--chart-3)"
+            />
+          </CardContent>
+        </Card>
+      </div>
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+        <Card className="xl:col-span-5">
+          <CardHeader>
+            <CardTitle className="font-normal">Pick a report</CardTitle>
+            <CardDescription>Each name opens that run. The ledger with CSV stays on History.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            {reports.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No finished batches in this browser yet.</p>
+            ) : (
+              reports.map((row) => (
+                <div
+                  key={row.id}
+                  className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${
+                    selected?.id === row.id ? "bg-muted" : ""
+                  }`}
+                >
+                  <button type="button" onClick={() => setPicked(row.id)} className="min-w-0 flex-1 text-left">
+                    <span className="font-medium">{row.name}</span>
+                    <span className="block text-muted-foreground text-xs">{row.scenario}</span>
+                  </button>
+                  <span className="text-right tabular-nums">
+                    <span className="block">{row.product.toFixed(2)} g/L</span>
+                    <Link href={runPath(row.id)} className="text-muted-foreground text-xs underline">
+                      Open
+                    </Link>
+                  </span>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+        <div className="xl:col-span-7">
+          <RunReport batch={selected} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function RunsView() {
   const live = useFermentation((s) => s.live);
   const alarms = useActiveAlarms();
   const scenario = SCENARIOS.find((item) => item.id === live.scenario);
@@ -39,12 +194,12 @@ export function OverviewView() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title={`${live.reactor} · ${live.name}`}
-        description="Food-yeast batch on BR-101. The 3D model, sensors, score, and alerts share one state."
+        description="This is the latest run, the one still open. Each finished run has its own page from History."
         actions={
           <>
             <Badge variant="outline">Yeast mode · simulated</Badge>
-            <a className="text-sm underline" href="/dashboard/benchmark">
-              Penicillin benchmark
+            <a className="text-sm underline" href="/dashboard">
+              Run reports
             </a>
           </>
         }
@@ -87,29 +242,6 @@ export function OverviewView() {
   );
 }
 
-export function RunsView() {
-  const live = useFermentation((s) => s.live);
-  return (
-    <div className="flex flex-col gap-4">
-      <PageHeader title="Live batch" description="The run in progress. Finish stores it with the demo history." />
-      <RunKpis />
-      <div className="grid gap-4 xl:grid-cols-12">
-        <div className="xl:col-span-7">
-          <BatchControls />
-        </div>
-        <div className="xl:col-span-5">
-          <RunMeters />
-        </div>
-      </div>
-      <ReadingGrid />
-      <YieldCard />
-      <p className="text-muted-foreground text-sm">
-        Elapsed {live.state.tMin} of 600 planned minutes. Status: {live.status}.
-      </p>
-    </div>
-  );
-}
-
 export function HistoryView() {
   const history = useFermentation((s) => s.history);
   const ends = history.flatMap((batch) => {
@@ -122,7 +254,7 @@ export function HistoryView() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Batch history"
-        description="Demo batches stay in this browser. A finished run is added here and, when Postgres is configured, written to fermentation_batches."
+        description="Each finished run has a page at /dashboard/runs/its-id. Live is the one still open."
       />
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
@@ -168,7 +300,12 @@ export function HistoryView() {
                   const span = end ? Math.min(1, end.tMin / 600) : 0;
                   return (
                     <TableRow key={batch.id}>
-                      <TableCell>{batch.name}</TableCell>
+                      <TableCell>
+                        <Link href={runPath(batch.id)} className="font-medium underline">
+                          {batch.name}
+                        </Link>
+                        <div className="text-muted-foreground text-xs">{runPath(batch.id)}</div>
+                      </TableCell>
                       <TableCell>{batch.scenario}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -209,15 +346,50 @@ export function CompareView() {
   const left = history.find((batch) => batch.id === leftId) ?? history[0];
   const right = history.find((batch) => batch.id === rightId) ?? history[1] ?? history[0];
   const data = useMemo(() => mergeSeries(left?.samples ?? [], right?.samples ?? []), [left, right]);
+  const trend = useMemo(() => improvementSeries(history), [history]);
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title="Compare batches" description="Product concentration from two stored runs." />
+      <PageHeader
+        title="Compare batches"
+        description="Oldest run on the left. A rising protein line is an improvement. Ethanol falling is an improvement too."
+      />
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-normal">Improvement across stored runs</CardTitle>
+          <CardDescription>
+            End protein and end ethanol from each finished run, in the order they were started. The bars are the change
+            in end protein versus the previous run.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {trend.length === 0 ? (
+            <p className="text-muted-foreground text-sm">Finish a live batch and the line will start here.</p>
+          ) : (
+            <ChartContainer config={chartConfig} className="aspect-auto h-72">
+              <ComposedChart data={trend}>
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ReferenceLine y={0} stroke="var(--foreground)" strokeDasharray="4 4" />
+                <Bar dataKey="delta" fill="var(--color-delta)" radius={4} />
+                <Line dataKey="product" stroke="var(--color-product)" dot />
+                <Line dataKey="ethanol" stroke="var(--color-ethanol)" dot />
+              </ComposedChart>
+            </ChartContainer>
+          )}
+        </CardContent>
+      </Card>
       <div className="grid gap-3 md:grid-cols-2">
         <BatchPicker label="Batch A" value={left?.id ?? ""} onChange={setLeftId} />
         <BatchPicker label="Batch B" value={right?.id ?? ""} onChange={setRightId} />
       </div>
       <Card>
-        <CardContent className="pt-4">
+        <CardHeader>
+          <CardTitle className="font-normal">Same clock, two runs</CardTitle>
+          <CardDescription>Protein grams per litre against minutes inside the batch.</CardDescription>
+        </CardHeader>
+        <CardContent>
           <ChartContainer config={chartConfig} className="aspect-auto h-72">
             <LineChart data={data}>
               <CartesianGrid vertical={false} />
@@ -540,6 +712,92 @@ export function SettingsView() {
   );
 }
 
+function summarize(batch: StoredBatch) {
+  const end = batch.samples.at(-1);
+  const scenario = SCENARIOS.find((item) => item.id === batch.scenario)?.label ?? batch.scenario;
+  return {
+    id: batch.id,
+    name: batch.name,
+    scenario,
+    product: end?.product ?? 0,
+    ethanol: end?.ethanol ?? 0,
+    dissolvedOxygen: end?.dissolvedOxygen ?? 0,
+    tMin: end?.tMin ?? 0,
+    alarms: batch.alarms.length,
+  };
+}
+
+function meanOf(values: number[]) {
+  if (values.length === 0) return 0;
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+export function RunReport({ batch }: { batch: StoredBatch | undefined }) {
+  if (!batch) {
+    return (
+      <Card>
+        <CardContent className="pt-4 text-muted-foreground text-sm">
+          Finish a live batch to read its report.
+        </CardContent>
+      </Card>
+    );
+  }
+  const end = batch.samples.at(-1);
+  const scenario = SCENARIOS.find((item) => item.id === batch.scenario)?.label ?? batch.scenario;
+  const clock = end ? Math.min(1, end.tMin / BATCH_MINUTES) : 0;
+  const series = batch.samples
+    .filter((_, index) => index % 4 === 0)
+    .map((row) => ({ t: row.tMin, product: row.product, ethanol: row.ethanol }));
+  return (
+    <Card className="h-full">
+      <CardHeader>
+        <CardTitle className="font-normal">{batch.name}</CardTitle>
+        <CardDescription>
+          {scenario}. Last sample only. Protein kilograms and the selling price stay on the live batch, because this
+          record does not store the feedstock.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <div className="grid grid-cols-3">
+          <Ring value={clock} label={end ? `${end.tMin}` : "0"} caption="Minutes" />
+          <Ring
+            value={end ? end.product / TARGET_YIELD_G_L : 0}
+            label={end ? end.product.toFixed(1) : "—"}
+            caption="Protein g/L"
+            tone="var(--chart-2)"
+          />
+          <Ring
+            value={end ? end.dissolvedOxygen / 100 : 0}
+            label={end ? `${end.dissolvedOxygen.toFixed(0)}%` : "—"}
+            caption="End dissolved oxygen"
+            tone="var(--chart-3)"
+          />
+        </div>
+        <ChartContainer config={chartConfig} className="aspect-auto h-48">
+          <LineChart data={series}>
+            <CartesianGrid vertical={false} />
+            <XAxis dataKey="t" unit=" min" />
+            <YAxis />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Line dataKey="product" stroke="var(--color-product)" dot={false} />
+            <Line dataKey="ethanol" stroke="var(--color-ethanol)" dot={false} />
+          </LineChart>
+        </ChartContainer>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-muted-foreground text-xs">
+            Ethanol {end ? end.ethanol.toFixed(2) : "—"} g/L · biomass {end ? end.biomass.toFixed(2) : "—"} g/L ·{" "}
+            {batch.alarms.length} alarm crossings. Contamination is not confirmed.
+          </p>
+          <Button type="button" size="sm" variant="outline" onClick={() => downloadCsv(batch.samples, batch.id)}>
+            CSV
+          </Button>
+        </div>
+        <AlarmList items={batch.alarms.slice(-4).reverse()} />
+      </CardContent>
+    </Card>
+  );
+}
+
 function BatchPicker({ label, value, onChange }: { label: string; value: string; onChange: (id: string) => void }) {
   const history = useFermentation((s) => s.history);
   return (
@@ -564,7 +822,9 @@ function BatchPicker({ label, value, onChange }: { label: string; value: string;
 function BatchOutcome({
   batch,
 }: {
-  batch: { name: string; scenario: string; samples: ProcessState[]; alarms: { length: number } } | undefined;
+  batch:
+    | { id: string; name: string; scenario: string; samples: ProcessState[]; alarms: { length: number } }
+    | undefined;
 }) {
   const end = batch?.samples.at(-1);
   if (!batch || !end) return null;
@@ -572,7 +832,11 @@ function BatchOutcome({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">{batch.name}</CardTitle>
+        <CardTitle className="text-base">
+          <Link href={runPath(batch.id)} className="underline">
+            {batch.name}
+          </Link>
+        </CardTitle>
         <CardDescription>{batch.scenario}</CardDescription>
       </CardHeader>
       <CardContent className="flex items-center gap-4">
@@ -595,6 +859,23 @@ function Stat({ label, value }: { label: string; value: string }) {
       <div className="font-medium tabular-nums">{value}</div>
     </div>
   );
+}
+
+function improvementSeries(history: StoredBatch[]) {
+  const ordered = [...history].sort((a, b) => a.startedAt.localeCompare(b.startedAt));
+  const rows: { name: string; product: number; ethanol: number; delta: number }[] = [];
+  for (const batch of ordered) {
+    const end = batch.samples.at(-1);
+    const product = end?.product ?? 0;
+    const previous = rows.at(-1)?.product ?? product;
+    rows.push({
+      name: batch.name,
+      product,
+      ethanol: end?.ethanol ?? 0,
+      delta: rows.length === 0 ? 0 : Math.round((product - previous) * 100) / 100,
+    });
+  }
+  return rows;
 }
 
 function mergeSeries(left: ProcessState[], right: ProcessState[]) {
