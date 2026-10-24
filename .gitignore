@@ -42,3 +42,8 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Generated training data and local training outputs (regenerate with ml/generate-yeast-batches.ts)
+/ml/data/
+/ml/out/*.json
+/ml/__pycache__/

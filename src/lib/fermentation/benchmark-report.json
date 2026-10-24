@@ -1,0 +1,136 @@
+{
+  "yield": [
+    {
+      "frac": 0.2,
+      "t_h": 46,
+      "n": 20,
+      "model_mape": 13.9,
+      "model_mae_t": 0.498,
+      "baseline_mean_mape": 13.25,
+      "baseline_so_far_mape": 93.48,
+      "coverage_80": 95.0
+    },
+    {
+      "frac": 0.4,
+      "t_h": 92,
+      "n": 20,
+      "model_mape": 17.82,
+      "model_mae_t": 0.632,
+      "baseline_mean_mape": 13.25,
+      "baseline_so_far_mape": 69.02,
+      "coverage_80": 95.0
+    },
+    {
+      "frac": 0.6,
+      "t_h": 138,
+      "n": 20,
+      "model_mape": 14.0,
+      "model_mae_t": 0.501,
+      "baseline_mean_mape": 13.25,
+      "baseline_so_far_mape": 42.93,
+      "coverage_80": 95.0
+    },
+    {
+      "frac": 0.8,
+      "t_h": 184,
+      "n": 20,
+      "model_mape": 11.78,
+      "model_mae_t": 0.425,
+      "baseline_mean_mape": 13.25,
+      "baseline_so_far_mape": 19.94,
+      "coverage_80": 95.0
+    }
+  ],
+  "fault": {
+    "threshold": 3.7572022033396415,
+    "false_alarm_batches_pct": 10.0,
+    "normal_test_batches": 20,
+    "detection_pct": 90.0,
+    "median_delay_h": 1.0,
+    "fault_batches": [
+      {
+        "batch": 91,
+        "onset_h": 20.0,
+        "alarm_h": 21.0,
+        "detected": true,
+        "delay_h": 1.0,
+        "total_t": 2.597
+      },
+      {
+        "batch": 92,
+        "onset_h": 80.0,
+        "alarm_h": 148.0,
+        "detected": true,
+        "delay_h": 68.0,
+        "total_t": 1.753
+      },
+      {
+        "batch": 93,
+        "onset_h": 70.0,
+        "alarm_h": null,
+        "detected": false,
+        "delay_h": null,
+        "total_t": 4.448
+      },
+      {
+        "batch": 94,
+        "onset_h": 20.0,
+        "alarm_h": 21.0,
+        "detected": true,
+        "delay_h": 1.0,
+        "total_t": 3.584
+      },
+      {
+        "batch": 95,
+        "onset_h": 20.0,
+        "alarm_h": 21.0,
+        "detected": true,
+        "delay_h": 1.0,
+        "total_t": 1.954
+      },
+      {
+        "batch": 96,
+        "onset_h": 70.0,
+        "alarm_h": 190.0,
+        "detected": true,
+        "delay_h": 120.0,
+        "total_t": 3.595
+      },
+      {
+        "batch": 97,
+        "onset_h": 20.0,
+        "alarm_h": 21.0,
+        "detected": true,
+        "delay_h": 1.0,
+        "total_t": 3.894
+      },
+      {
+        "batch": 98,
+        "onset_h": 80.0,
+        "alarm_h": 150.0,
+        "detected": true,
+        "delay_h": 70.0,
+        "total_t": 1.731
+      },
+      {
+        "batch": 99,
+        "onset_h": 20.0,
+        "alarm_h": 21.0,
+        "detected": true,
+        "delay_h": 1.0,
+        "total_t": 0.891
+      },
+      {
+        "batch": 100,
+        "onset_h": 20.0,
+        "alarm_h": 21.0,
+        "detected": true,
+        "delay_h": 1.0,
+        "total_t": 1.555
+      }
+    ]
+  },
+  "train_mean_t": 2.9741242857142858,
+  "threshold": 3.7572022033396415,
+  "units_note": "Statistics file says kg; magnitudes match grams, so totals are shown in tonnes."
+}
