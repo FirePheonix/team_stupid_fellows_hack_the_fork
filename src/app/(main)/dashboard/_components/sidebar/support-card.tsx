@@ -8,7 +8,7 @@ export function SupportCard() {
       <CardHeader className="min-w-0 px-4">
         <CardTitle className="truncate text-sm">Simulated plant</CardTitle>
         <CardDescription className="line-clamp-3">
-          One kinetic model drives the reactor, the sensors, and the baseline yield.{" "}
+          One yeast simulation drives the reactor and sensors; trained models predict protein and flag faults.{" "}
           <Link href="/dashboard/insights" className="text-foreground hover:underline">
             Open insights
           </Link>

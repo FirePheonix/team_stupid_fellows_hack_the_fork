@@ -18,6 +18,6 @@ export const APP_CONFIG = {
   meta: {
     title: "FermaTwin · fermentation process intelligence",
     description:
-      "A simulated bioreactor, baseline yield projection, and explainable batch alerts. No plant hardware required.",
+      "A simulated yeast bioreactor with trained protein prediction, fault detection, and explainable alerts. No plant hardware required.",
   },
 };

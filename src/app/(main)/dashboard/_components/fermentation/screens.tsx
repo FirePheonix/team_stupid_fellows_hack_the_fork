@@ -36,7 +36,7 @@ export function OverviewView() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title={`${live.reactor} · ${live.name}`}
-        description="Simulated E. coli batch. The 3D model, sensors, and alerts share one state. The protein desk reads that same batch as yeast protein: score, selling price, and a reference amino-acid row."
+        description="Simulated food-yeast (Saccharomyces cerevisiae) batch. The 3D model, sensors, alerts, and Model A share one state; the protein desk scores it with Model B's amino-acid row, selling price, and the agent paragraph."
         actions={<Badge variant="outline">Simulated data</Badge>}
       />
       <p className="text-muted-foreground text-sm">{scenario?.note}</p>
