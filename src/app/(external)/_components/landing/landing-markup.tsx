@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 
+import { HeroCards } from "./hero-cards";
+
 export function LandingMarkup() {
   return (
     <>
@@ -37,7 +39,8 @@ export function LandingMarkup() {
                   className="flex h-full items-center justify-between"
                   style={{ padding: "0 var(--v2-grid-padding)" } as CSSProperties}
                 >
-                  <a className="flex shrink-0 items-center font-v2-sans text-[15px] font-medium tracking-tight" aria-label="FermaTwin home" href="/" style={{ color: "var(--v2-nav-text)", letterSpacing: "-0.04em" } as CSSProperties}>
+                  <a className="flex shrink-0 items-center font-v2-sans text-[15px] font-medium tracking-tight" aria-label="FermaTwin home" href="/" style={{ color: "var(--v2-nav-text)", letterSpacing: "-0.04em", gap: "8px" } as CSSProperties}>
+                    <img src="/logo/icon.png" alt="" width={22} height={22} />
                     FermaTwin
                   </a>
                   <nav
@@ -471,7 +474,7 @@ export function LandingMarkup() {
                   </nav>
                   <div className="hidden shrink-0 items-center gap-4 min-[1100px]:flex xl:gap-6">
                     <a
-                      href="https://github.com/MrSpideyNihal/Pr-agent"
+                      href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center transition-opacity hover:opacity-80"
@@ -509,7 +512,7 @@ export function LandingMarkup() {
                       </span>
                     </a>
                     <div className="flex items-center gap-3 xl:gap-4">
-                      <a className="v2-btn v2-btn--sm v2-btn--secondary whitespace-nowrap" href="https://github.com/MrSpideyNihal/Pr-agent">
+                      <a className="v2-btn v2-btn--sm v2-btn--secondary whitespace-nowrap" href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork">
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="" aria-hidden="true">
                           <path
                             d="M4.5 2.5L8 6l-3.5 3.5"
@@ -613,7 +616,7 @@ export function LandingMarkup() {
                   style={{ marginTop: "var(--v2-gutter)", gap: "12px" } as CSSProperties}
                 >
                   <a
-                    href="https://github.com/MrSpideyNihal/Pr-agent"
+                    href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center"
@@ -653,7 +656,7 @@ export function LandingMarkup() {
                   </a>
                   <a
                     className="v2-btn v2-btn--lg v2-btn--secondary w-full justify-center whitespace-nowrap"
-                    href="https://github.com/MrSpideyNihal/Pr-agent"
+                    href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                   >
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="" aria-hidden="true">
                       <path
@@ -698,7 +701,7 @@ export function LandingMarkup() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="v2-announcement-pill"
-                                href="https://github.com/MrSpideyNihal/Pr-agent"
+                                href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                               >
                                 <span className="jsx-ea0055af375d7f3d v2-announcement-pill-msg">
                                   Yeast protein, scored while the batch is still running:
@@ -740,7 +743,7 @@ export function LandingMarkup() {
                               </span>
                             </h1>
                             <p className="jsx-d1dcb69e238f30d6">
-                              Explore fermentation through an interactive 3D bioreactor. Adjust operating parameters, observe the simulated process in real time, and use machine-learning models to predict yield, detect unusual behaviour, and investigate better operating strategies. Ask in plain language about glucose, cane molasses, or pea-starch hydrolysate. The lab answers with a 0–1 protein score, a rupee selling price per kg, and the amino acids that limit that feedstock. A fault flag is a process warning. It does not confirm contamination. Power in the price is calculated, not metered.
+                              Watch a 3D bioreactor as you change the settings. Ask about glucose, cane molasses, or pea-starch hydrolysate for a 0–1 protein score, a rupee price per kg, and the limiting amino acids. A fault flag does not confirm contamination, and the power in that price is calculated, not metered.
                             </p>
                             <div className="jsx-d1dcb69e238f30d6 hero-proto-actions">
                               <a className="v2-btn v2-btn--md v2-btn--primary" href="/dashboard">
@@ -755,7 +758,7 @@ export function LandingMarkup() {
                                 </svg>
                                 Explore the Lab
                               </a>
-                              <a className="v2-btn v2-btn--md v2-btn--secondary" href="https://github.com/MrSpideyNihal/Pr-agent">
+                              <a className="v2-btn v2-btn--md v2-btn--secondary" href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork">
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="" aria-hidden="true">
                                   <path
                                     d="M4.5 2.5L8 6l-3.5 3.5"
@@ -770,1731 +773,7 @@ export function LandingMarkup() {
                             </div>
                           </div>
                           <div className="jsx-d1dcb69e238f30d6 stage-visual hero-proto-enter-late">
-                            <div className="jsx-60721d3153d0348b collage">
-                              <div className="jsx-60721d3153d0348b collage-stage">
-                                <div className="jsx-60721d3153d0348b collage-stack is-locked">
-                                  <div
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label="Show Operating Strategy Optimization"
-                                    className="jsx-60721d3153d0348b card-slot slot-2"
-                                  >
-                                    <div
-                                      role="group"
-                                      aria-hidden="true"
-                                      aria-label="FermaTwin bioreactor dashboard"
-                                      className="jsx-f4deca1016db76e4 peek-card peek-pam"
-                                    >
-                                      <div className="jsx-f4deca1016db76e4 peek-tabs">
-                                        <span className="jsx-f4deca1016db76e4 card-label">
-                                          <img src="/logo/ponytail-icon.png" alt="" width={18} height={18} className="jsx-f4deca1016db76e4 card-mark" />
-                                          Operating Strategy Optimization
-                                        </span>
-                                        <div role="tablist" aria-label="Operating Strategy Optimization runs" className="jsx-f4deca1016db76e4 peek-tablist">
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="true"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab is-active"
-                                          >
-                                            All runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Active runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Closed runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Merged runs
-                                          </button>
-                                        </div>
-                                        <button
-                                          type="button"
-                                          role="switch"
-                                          aria-checked="true"
-                                          tabIndex={-1}
-                                          className="jsx-f4deca1016db76e4 peek-toggle is-on"
-                                        >
-                                          <span aria-hidden="true" className="jsx-f4deca1016db76e4 sync-track">
-                                            <span className="jsx-f4deca1016db76e4 sync-knob" />
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-toggle-copy">Run in simulation</span>
-                                        </button>
-                                      </div>
-                                      <div className="jsx-f4deca1016db76e4 peek-rows">
-                                        <div className="jsx-f4deca1016db76e4 peek-row peek-head">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            Batch
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            Run
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta">
-                                            Status
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            #88
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            do setpoint drifted
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                            Running
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            #91
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            feed step raised
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                            Complete
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            #74
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            hold temperature steady
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-badge is-amber">
-                                            Awaiting Approval
-                                          </span>
-                                        </div>
-                                        <div data-pr="closed" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            #66
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            ended before prediction
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-badge is-red">
-                                            Failed
-                                          </span>
-                                        </div>
-                                        <div data-pr="closed" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            #70
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            run left unfinished
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-badge is-red">
-                                            Failed
-                                          </span>
-                                        </div>
-                                        <div data-pr="merged" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            #96
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            reset feed controller
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                            Complete
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            #102
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            combine two steps
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                            Running
-                                          </span>
-                                        </div>
-                                        <div data-pr="closed" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-clock">
-                                            #61
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            approval never granted
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-badge is-amber">
-                                            Awaiting Approval
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label="Show predictions"
-                                    className="jsx-60721d3153d0348b card-slot slot-1"
-                                  >
-                                    <div
-                                      role="group"
-                                      aria-hidden="true"
-                                      aria-label="FermaTwin prediction dashboard"
-                                      className="jsx-f4deca1016db76e4 peek-card peek-certs"
-                                    >
-                                      <div className="jsx-f4deca1016db76e4 peek-tabs">
-                                        <span className="jsx-f4deca1016db76e4 card-label">
-                                          <img src="/logo/hermes-agent-icon.png" alt="" width={18} height={18} className="jsx-f4deca1016db76e4 card-mark" />
-                                          Early Yield Prediction
-                                        </span>
-                                        <div
-                                          role="tablist"
-                                          aria-label="Early Yield Prediction runs"
-                                          className="jsx-f4deca1016db76e4 peek-tablist"
-                                        >
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="true"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab is-active"
-                                          >
-                                            All runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Active runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Closed runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Merged runs
-                                          </button>
-                                        </div>
-                                        <button
-                                          type="button"
-                                          role="switch"
-                                          aria-checked="false"
-                                          tabIndex={-1}
-                                          className="jsx-f4deca1016db76e4 peek-toggle"
-                                        >
-                                          <span aria-hidden="true" className="jsx-f4deca1016db76e4 sync-track">
-                                            <span className="jsx-f4deca1016db76e4 sync-knob" />
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-toggle-copy">Awaiting approval</span>
-                                        </button>
-                                      </div>
-                                      <div className="jsx-f4deca1016db76e4 peek-rows">
-                                        <div className="jsx-f4deca1016db76e4 peek-row peek-head">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            Run
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            Status
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta">
-                                            Updated
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #184 mid-run prediction
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                              Running
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            Apr 01 2027
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #176 re-check the do drift
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-amber">
-                                              Awaiting Approval
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta is-amber">
-                                            Jun 08 2026
-                                          </span>
-                                        </div>
-                                        <div data-pr="closed" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #162 drop unusual swing
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-red">
-                                              Failed
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta is-red">
-                                            May 23 2026
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #191 pool the feed pumps
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                              Complete
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            Feb 18 2027
-                                          </span>
-                                        </div>
-                                        <div data-pr="merged" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #155 off-gas timeout
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                              Complete
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            Jan 05 2027
-                                          </span>
-                                        </div>
-                                        <div data-pr="closed" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #148 sensor flake
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-red">
-                                              Failed
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta is-red">
-                                            Apr 30 2026
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #203 mesh the samples
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-amber">
-                                              Awaiting Approval
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta is-amber">
-                                            Jul 14 2026
-                                          </span>
-                                        </div>
-                                        <div data-pr="merged" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #210 coolant loop check
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                              Running
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            Nov 22 2027
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label="Show Explainable Process Intelligence"
-                                    className="jsx-60721d3153d0348b card-slot slot-3"
-                                  >
-                                    <div
-                                      role="group"
-                                      aria-hidden="true"
-                                      aria-label="FermaTwin optimizer sessions"
-                                      className="jsx-f4deca1016db76e4 peek-card peek-agent"
-                                    >
-                                      <div className="jsx-f4deca1016db76e4 peek-tabs">
-                                        <span className="jsx-f4deca1016db76e4 card-label">
-                                          <img src="/logo/grok-bot-icon.png" alt="" width={18} height={18} className="jsx-f4deca1016db76e4 card-mark" />
-                                          Explainable Process Intelligence
-                                        </span>
-                                        <div
-                                          role="tablist"
-                                          aria-label="Explainable Process Intelligence runs"
-                                          className="jsx-f4deca1016db76e4 peek-tablist"
-                                        >
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="true"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab is-active"
-                                          >
-                                            All runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Active runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Closed runs
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected="false"
-                                            tabIndex={-1}
-                                            className="jsx-f4deca1016db76e4 peek-tab"
-                                          >
-                                            Merged runs
-                                          </button>
-                                        </div>
-                                        <button
-                                          type="button"
-                                          role="switch"
-                                          aria-checked="false"
-                                          tabIndex={-1}
-                                          className="jsx-f4deca1016db76e4 peek-toggle"
-                                        >
-                                          <span aria-hidden="true" className="jsx-f4deca1016db76e4 sync-track">
-                                            <span className="jsx-f4deca1016db76e4 sync-knob" />
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-toggle-copy">Awaiting approval</span>
-                                        </button>
-                                      </div>
-                                      <div className="jsx-f4deca1016db76e4 peek-rows">
-                                        <div className="jsx-f4deca1016db76e4 peek-row peek-head">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            Run
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            Source
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta">
-                                            Updated
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            Status
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #118 feed profile
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            <span className="jsx-f4deca1016db76e4 peek-bundle">
-                                              web
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            6d
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                              Running
-                                            </span>
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #124 cip notes
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            <span className="jsx-f4deca1016db76e4 peek-bundle">
-                                              data
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            4h
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                              Complete
-                                            </span>
-                                          </span>
-                                        </div>
-                                        <div data-pr="active" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #131 scale-up check
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            <span className="jsx-f4deca1016db76e4 peek-bundle">
-                                              app
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            12d
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-amber">
-                                              Awaiting Approval
-                                            </span>
-                                          </span>
-                                        </div>
-                                        <div data-pr="closed" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #109 harvest script
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            <span className="jsx-f4deca1016db76e4 peek-bundle">
-                                              infra
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            9d
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-red">
-                                              Failed
-                                            </span>
-                                          </span>
-                                        </div>
-                                        <div data-pr="merged" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #140 telemetry
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            <span className="jsx-f4deca1016db76e4 peek-bundle">
-                                              data
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            2d
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                              Complete
-                                            </span>
-                                          </span>
-                                        </div>
-                                        <div data-pr="closed" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #97 media notes
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            <span className="jsx-f4deca1016db76e4 peek-bundle">
-                                              web
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            5d
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-red">
-                                              Failed
-                                            </span>
-                                          </span>
-                                        </div>
-                                        <div data-pr="merged" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #146 sampling
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            <span className="jsx-f4deca1016db76e4 peek-bundle">
-                                              docs
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            9d
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-green">
-                                              Running
-                                            </span>
-                                          </span>
-                                        </div>
-                                        <div data-pr="closed" className="jsx-f4deca1016db76e4 peek-row">
-                                          <span className="jsx-f4deca1016db76e4 peek-row-name">
-                                            #88 start-up
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-bundle">
-                                            <span className="jsx-f4deca1016db76e4 peek-bundle">
-                                              app
-                                            </span>
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-meta ">
-                                            1d
-                                          </span>
-                                          <span className="jsx-f4deca1016db76e4 peek-row-status">
-                                            <span className="jsx-f4deca1016db76e4 peek-badge is-amber">
-                                              Awaiting Approval
-                                            </span>
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="jsx-60721d3153d0348b card-slot slot-0 is-front">
-                                    <div
-                                      role="group"
-                                      aria-label="FermaTwin modules on a fermentation run"
-                                      className="jsx-60721d3153d0348b collage-card collage-window"
-                                    >
-                                      <div className="jsx-60721d3153d0348b stage-app">
-                                        <div className="jsx-60721d3153d0348b stage-tabs">
-                                          <span className="jsx-60721d3153d0348b card-label">
-                                            <span
-                                              style={{ background: "var(--v2-color-product-secrets-ink)" } as CSSProperties}
-                                              aria-hidden="true"
-                                              className="jsx-60721d3153d0348b card-dot"
-                                            />
-                                            3D Bioreactor Lab
-                                          </span>
-                                          <div role="tablist" aria-label="3D Bioreactor Lab runs" className="jsx-60721d3153d0348b stage-tablist">
-                                            <button
-                                              type="button"
-                                              role="tab"
-                                              aria-selected="true"
-                                              className="jsx-60721d3153d0348b stage-tab is-active"
-                                            >
-                                              All runs
-                                            </button>
-                                            <button type="button" role="tab" aria-selected="false" className="jsx-60721d3153d0348b stage-tab">
-                                              Active runs
-                                            </button>
-                                            <button type="button" role="tab" aria-selected="false" className="jsx-60721d3153d0348b stage-tab">
-                                              Closed runs
-                                            </button>
-                                            <button type="button" role="tab" aria-selected="false" className="jsx-60721d3153d0348b stage-tab">
-                                              Merged runs
-                                            </button>
-                                          </div>
-                                          <button
-                                            type="button"
-                                            role="switch"
-                                            aria-checked="false"
-                                            className="jsx-f4deca1016db76e4 peek-toggle"
-                                          >
-                                            <span aria-hidden="true" className="jsx-f4deca1016db76e4 sync-track">
-                                              <span className="jsx-f4deca1016db76e4 sync-knob" />
-                                            </span>
-                                            <span className="jsx-f4deca1016db76e4 peek-toggle-copy">Awaiting approval</span>
-                                          </button>
-                                        </div>
-                                        <div className="jsx-60721d3153d0348b stage-table-wrap">
-                                          <div
-                                            style={{ "--envcount": "5" } as CSSProperties}
-                                            className="jsx-60721d3153d0348b stage-table"
-                                          >
-                                            <div className="jsx-60721d3153d0348b stage-row stage-head">
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                Run
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span className="jsx-60721d3153d0348b env-long">
-                                                  Laboratory
-                                                </span>
-                                                <span className="jsx-60721d3153d0348b env-short">
-                                                  Lab
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span className="jsx-60721d3153d0348b env-long">
-                                                  Pilot
-                                                </span>
-                                                <span className="jsx-60721d3153d0348b env-short">
-                                                  Pil
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span className="jsx-60721d3153d0348b env-long">
-                                                  Plant–Core
-                                                </span>
-                                                <span className="jsx-60721d3153d0348b env-short">
-                                                  Core
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span className="jsx-60721d3153d0348b env-long">
-                                                  Plant–US
-                                                </span>
-                                                <span className="jsx-60721d3153d0348b env-short">
-                                                  US
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span className="jsx-60721d3153d0348b env-long">
-                                                  Plant–EU
-                                                </span>
-                                                <span className="jsx-60721d3153d0348b env-short">
-                                                  EU
-                                                </span>
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "0" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-secret" aria-hidden="true"><circle cx="8" cy="15" r="3.2" /><path d="M10.6 13.2 19 5M15.5 8.2l2 2M13.2 6.4l2 2" strokeLinecap="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #128 smooth feed noise
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.40s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.52s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.64s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.76s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.88s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "1" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-secret" aria-hidden="true"><circle cx="8" cy="15" r="3.2" /><path d="M10.6 13.2 19 5M15.5 8.2l2 2M13.2 6.4l2 2" strokeLinecap="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #134 balance flow ratios
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.43s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.67s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.79s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.91s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "2" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-secret" aria-hidden="true"><circle cx="8" cy="15" r="3.2" /><path d="M10.6 13.2 19 5M15.5 8.2l2 2M13.2 6.4l2 2" strokeLinecap="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #141 tighten the feed profile
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.58s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.70s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.82s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "3" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-secret" aria-hidden="true"><circle cx="8" cy="15" r="3.2" /><path d="M10.6 13.2 19 5M15.5 8.2l2 2M13.2 6.4l2 2" strokeLinecap="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #146 fix do calibration
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.49s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.73s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.85s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "4" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-secret" aria-hidden="true"><circle cx="8" cy="15" r="3.2" /><path d="M10.6 13.2 19 5M15.5 8.2l2 2M13.2 6.4l2 2" strokeLinecap="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #152 log the profile
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.64s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.76s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "1.00s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "5" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-secret" aria-hidden="true"><circle cx="8" cy="15" r="3.2" /><path d="M10.6 13.2 19 5M15.5 8.2l2 2M13.2 6.4l2 2" strokeLinecap="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #158 rename the run stage
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.67s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.79s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.91s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "6" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-folder" aria-hidden="true"><path d="M3 7.2h5.2l1.8 1.8H21V20H3z" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #163 close the stale alarm
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.58s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.70s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.82s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.94s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "1.06s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "7" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-folder" aria-hidden="true"><path d="M3 7.2h5.2l1.8 1.8H21V20H3z" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #171 drop the stale loop
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.61s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.73s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.85s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "8" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-folder" aria-hidden="true"><path d="M3 7.2h5.2l1.8 1.8H21V20H3z" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #177 revert the noisy setpoint
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.76s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "9" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-folder" aria-hidden="true"><path d="M3 7.2h5.2l1.8 1.8H21V20H3z" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #182 close the duplicate alarm
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.79s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "10" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-dynamic" aria-hidden="true"><path d="M13 3 5 13h6l-1 8 9-12h-6z" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #186 scan the new batch
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.70s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "11" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-rotation" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.1-5.2" strokeLinecap="round" /><path d="M19.5 4.2v4.6h-4.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #192 flag the drift
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.73s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "12" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-cert" aria-hidden="true"><circle cx="12" cy="9" r="5" /><path d="M9.2 13.4 8.2 20l3.8-1.8L15.8 20l-1-6.6" strokeLinejoin="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-name">
-                                                  #198 check the probes
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "1.00s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "13" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-import" aria-hidden="true"><path d="M12 4v10M8 10.5 12 14.5 16 10.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M5 20h14" strokeLinecap="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-tag">
-                                                  Pilot
-                                                </span>
-                                                <span className="jsx-60721d3153d0348b stage-row-name is-path">
-                                                  #204 start the feeding pass
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "0.91s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                            <div
-                                              style={{ "--ri": "14" } as CSSProperties}
-                                              className="jsx-60721d3153d0348b stage-row stage-tr"
-                                            >
-                                              <span className="jsx-60721d3153d0348b stage-cell-name">
-                                                <svg width="15" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="jsx-60721d3153d0348b stage-row-ico is-import" aria-hidden="true"><path d="M12 4v10M8 10.5 12 14.5 16 10.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M5 20h14" strokeLinecap="round" /></svg>
-                                                <span className="jsx-60721d3153d0348b stage-row-tag">
-                                                  Laboratory
-                                                </span>
-                                                <span className="jsx-60721d3153d0348b stage-row-name is-path">
-                                                  #211 land the profile trim
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env">
-                                                <span style={{ "--d": "1.06s" } as CSSProperties} className="jsx-60721d3153d0348b stage-check">
-                                                  <svg
-                                                    width="13"
-                                                    height="13"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.4"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    aria-hidden="true"
-                                                  >
-                                                    <path d="m5 12 4.5 4.5L19 7" />
-                                                  </svg>
-                                                </span>
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                              <span className="jsx-60721d3153d0348b stage-cell-env stage-dash">
-                                                —
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="jsx-60721d3153d0348b collage-overlay collage-overlay-env">
-                                      <div role="group" aria-label="Environments" className="jsx-60721d3153d0348b env-card">
-                                        <div role="listbox" aria-multiselectable="true" className="jsx-60721d3153d0348b env-list">
-                                          <button
-                                            type="button"
-                                            role="option"
-                                            aria-selected="true"
-                                            className="jsx-60721d3153d0348b env-opt is-on"
-                                          >
-                                            <span className="jsx-60721d3153d0348b env-box">
-                                              <svg
-                                                width="11"
-                                                height="11"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2.8"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                aria-hidden="true"
-                                              >
-                                                <path d="m5 12 4.5 4.5L19 7" />
-                                              </svg>
-                                            </span>
-                                            Laboratory
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="option"
-                                            aria-selected="true"
-                                            className="jsx-60721d3153d0348b env-opt is-on"
-                                          >
-                                            <span className="jsx-60721d3153d0348b env-box">
-                                              <svg
-                                                width="11"
-                                                height="11"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2.8"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                aria-hidden="true"
-                                              >
-                                                <path d="m5 12 4.5 4.5L19 7" />
-                                              </svg>
-                                            </span>
-                                            Pilot
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="option"
-                                            aria-selected="true"
-                                            className="jsx-60721d3153d0348b env-opt is-on"
-                                          >
-                                            <span className="jsx-60721d3153d0348b env-box">
-                                              <svg
-                                                width="11"
-                                                height="11"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2.8"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                aria-hidden="true"
-                                              >
-                                                <path d="m5 12 4.5 4.5L19 7" />
-                                              </svg>
-                                            </span>
-                                            Plant–Core
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="option"
-                                            aria-selected="true"
-                                            className="jsx-60721d3153d0348b env-opt is-on"
-                                          >
-                                            <span className="jsx-60721d3153d0348b env-box">
-                                              <svg
-                                                width="11"
-                                                height="11"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2.8"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                aria-hidden="true"
-                                              >
-                                                <path d="m5 12 4.5 4.5L19 7" />
-                                              </svg>
-                                            </span>
-                                            Plant–US
-                                          </button>
-                                          <button
-                                            type="button"
-                                            role="option"
-                                            aria-selected="true"
-                                            className="jsx-60721d3153d0348b env-opt is-on"
-                                          >
-                                            <span className="jsx-60721d3153d0348b env-box">
-                                              <svg
-                                                width="11"
-                                                height="11"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2.8"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                aria-hidden="true"
-                                              >
-                                                <path d="m5 12 4.5 4.5L19 7" />
-                                              </svg>
-                                            </span>
-                                            Plant–EU
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                            <HeroCards />
                           </div>
                         </div>
                       </div>
@@ -2595,22 +874,22 @@ export function LandingMarkup() {
                               </div>
                               <div id="lineup" className="agent-lineup">
                                 <article className="agent-lineup-card">
-                                  <img src="/logo/ponytail-icon.png" alt="" width={44} height={44} className="agent-lineup-icon" />
+                                  <img src="/logo/icon.png" alt="" width={44} height={44} className="agent-lineup-icon" />
                                   <h3 id="ponytail" className="agent-lineup-name font-v2-sans">Operating Strategy Optimization</h3>
                                   <p className="agent-lineup-desc font-v2-sans">Trims the extra down to the efficient setpoints that shape the run, and shows protein kilograms beside calculated power.</p>
                                 </article>
                                 <article className="agent-lineup-card">
-                                  <img src="/logo/openclaw-icon.png" alt="" width={44} height={44} className="agent-lineup-icon" />
+                                  <img src="/logo/icon.png" alt="" width={44} height={44} className="agent-lineup-icon" />
                                   <h3 id="openclaw" className="agent-lineup-name font-v2-sans">Process Anomaly Detection</h3>
                                   <p className="agent-lineup-desc font-v2-sans">Watches the run for drift and flags unusual behaviour as it emerges. A flag is a process warning, not a confirmed infection.</p>
                                 </article>
                                 <article className="agent-lineup-card">
-                                  <img src="/logo/grok-bot-icon.png" alt="" width={44} height={44} className="agent-lineup-icon" />
+                                  <img src="/logo/icon.png" alt="" width={44} height={44} className="agent-lineup-icon" />
                                   <h3 id="grokbot" className="agent-lineup-name font-v2-sans">Explainable Process Intelligence</h3>
                                   <p className="agent-lineup-desc font-v2-sans">Explains every prediction and the parameter interactions behind it, including how air and feed share one oxygen limit.</p>
                                 </article>
                                 <article className="agent-lineup-card">
-                                  <img src="/logo/hermes-agent-icon.png" alt="" width={44} height={44} className="agent-lineup-icon" />
+                                  <img src="/logo/icon.png" alt="" width={44} height={44} className="agent-lineup-icon" />
                                   <h3 id="hermes" className="agent-lineup-name font-v2-sans">Early Yield Prediction</h3>
                                   <p className="agent-lineup-desc font-v2-sans">Estimates the final yield early in the run, trained on completed batches, then folds that into a protein score before the batch ends.</p>
                                 </article>
@@ -2632,7 +911,7 @@ export function LandingMarkup() {
                               >
                                 <a
                                   className="v2-btn v2-btn--md v2-btn--primary"
-                                  href="https://github.com/MrSpideyNihal/Pr-agent"
+                                  href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                                 >
                                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="" aria-hidden="true">
                                     <path
@@ -2850,10 +1129,10 @@ export function LandingMarkup() {
                                       </span>
                                       <span style={{ display: "inline-flex", alignItems: "center", gap: "1.6cqw" } as CSSProperties}>
                                         <span style={{ fontSize: "4.4cqw", fontWeight: "500", letterSpacing: "-0.04em", lineHeight: "1" } as CSSProperties}>
-                                          62
+                                          30
                                         </span>
                                         <span style={{ fontSize: "2.2cqw", lineHeight: "1", padding: "0.7cqw 1.3cqw", background: "#1f8a4c", color: "#f7f3ea" } as CSSProperties}>
-                                          C
+                                          °C
                                         </span>
                                       </span>
                                     </div>
@@ -2861,40 +1140,40 @@ export function LandingMarkup() {
                                       <svg viewBox="0 0 320 128" aria-hidden="true" style={{ width: "100%", height: "26cqw", display: "block" } as CSSProperties}>
                                         <line x1="28" y1="8" x2="28" y2="108" stroke="var(--v2-mock-border)" strokeWidth="1" />
                                         <line x1="28" y1="108" x2="312" y2="108" stroke="var(--v2-mock-border)" strokeWidth="1" />
-                                        <rect x="46" y="62" width="28" height="46" fill="#f0d45c" />
-                                        <rect x="92" y="38" width="28" height="70" fill="#e2b423" />
-                                        <rect x="138" y="74" width="28" height="34" fill="#f0d45c" />
-                                        <rect x="184" y="22" width="28" height="86" fill="#1f8a4c" />
-                                        <rect x="230" y="50" width="28" height="58" fill="#f0d45c" />
-                                        <rect x="276" y="66" width="28" height="42" fill="#e2b423" />
-                                        <text x="60" y="122" textAnchor="middle" fill="currentColor" fontSize="9">#128</text>
-                                        <text x="106" y="122" textAnchor="middle" fill="currentColor" fontSize="9">#141</text>
-                                        <text x="152" y="122" textAnchor="middle" fill="currentColor" fontSize="9">#156</text>
-                                        <text x="198" y="122" textAnchor="middle" fill="currentColor" fontSize="9">#170</text>
-                                        <text x="244" y="122" textAnchor="middle" fill="currentColor" fontSize="9">#188</text>
-                                        <text x="290" y="122" textAnchor="middle" fill="currentColor" fontSize="9">#201</text>
+                                        <rect x="46" y="42" width="28" height="66" fill="#f0d45c" />
+                                        <rect x="92" y="36" width="28" height="72" fill="#1f8a4c" />
+                                        <rect x="138" y="65" width="28" height="43" fill="#e2b423" />
+                                        <rect x="184" y="61" width="28" height="47" fill="#f0d45c" />
+                                        <rect x="230" y="70" width="28" height="38" fill="#e2b423" />
+                                        <rect x="276" y="58" width="28" height="50" fill="#f0d45c" />
+                                        <text x="60" y="122" textAnchor="middle" fill="currentColor" fontSize="9">pH</text>
+                                        <text x="106" y="122" textAnchor="middle" fill="currentColor" fontSize="9">°C</text>
+                                        <text x="152" y="122" textAnchor="middle" fill="currentColor" fontSize="9">DO</text>
+                                        <text x="198" y="122" textAnchor="middle" fill="currentColor" fontSize="9">Air</text>
+                                        <text x="244" y="122" textAnchor="middle" fill="currentColor" fontSize="9">Feed</text>
+                                        <text x="290" y="122" textAnchor="middle" fill="currentColor" fontSize="9">rpm</text>
                                       </svg>
                                       <div style={{ display: "grid", gap: "1.8cqw" } as CSSProperties}>
                                         <div style={{ display: "grid", gridTemplateColumns: "18cqw 1fr 6cqw", alignItems: "center", gap: "2cqw" } as CSSProperties}>
-                                          <span style={{ fontSize: "2.3cqw" } as CSSProperties}>Tint</span>
+                                          <span style={{ fontSize: "2.3cqw" } as CSSProperties}>DO %</span>
                                           <span style={{ height: "1.5cqw", background: "color-mix(in oklab, var(--v2-mock-border) 70%, transparent)" } as CSSProperties}>
-                                            <span style={{ display: "block", width: "46%", height: "100%", background: "#7eb6ff" } as CSSProperties} />
+                                            <span style={{ display: "block", width: "50%", height: "100%", background: "#7eb6ff" } as CSSProperties} />
                                           </span>
-                                          <span style={{ fontSize: "2.3cqw", textAlign: "right" } as CSSProperties}>18</span>
+                                          <span style={{ fontSize: "2.3cqw", textAlign: "right" } as CSSProperties}>30</span>
                                         </div>
                                         <div style={{ display: "grid", gridTemplateColumns: "18cqw 1fr 6cqw", alignItems: "center", gap: "2cqw" } as CSSProperties}>
-                                          <span style={{ fontSize: "2.3cqw" } as CSSProperties}>Emoji</span>
+                                          <span style={{ fontSize: "2.3cqw" } as CSSProperties}>pH</span>
                                           <span style={{ height: "1.5cqw", background: "color-mix(in oklab, var(--v2-mock-border) 70%, transparent)" } as CSSProperties}>
-                                            <span style={{ display: "block", width: "22%", height: "100%", background: "#f2a3c7" } as CSSProperties} />
+                                            <span style={{ display: "block", width: "40%", height: "100%", background: "#f2a3c7" } as CSSProperties} />
                                           </span>
-                                          <span style={{ fontSize: "2.3cqw", textAlign: "right" } as CSSProperties}>7</span>
+                                          <span style={{ fontSize: "2.3cqw", textAlign: "right" } as CSSProperties}>5.0</span>
                                         </div>
                                         <div style={{ display: "grid", gridTemplateColumns: "18cqw 1fr 6cqw", alignItems: "center", gap: "2cqw" } as CSSProperties}>
-                                          <span style={{ fontSize: "2.3cqw" } as CSSProperties}>Redundant</span>
+                                          <span style={{ fontSize: "2.3cqw" } as CSSProperties}>Air</span>
                                           <span style={{ height: "1.5cqw", background: "color-mix(in oklab, var(--v2-mock-border) 70%, transparent)" } as CSSProperties}>
-                                            <span style={{ display: "block", width: "34%", height: "100%", background: "#f0d45c" } as CSSProperties} />
+                                            <span style={{ display: "block", width: "47%", height: "100%", background: "#f0d45c" } as CSSProperties} />
                                           </span>
-                                          <span style={{ fontSize: "2.3cqw", textAlign: "right" } as CSSProperties}>11</span>
+                                          <span style={{ fontSize: "2.3cqw", textAlign: "right" } as CSSProperties}>1.2</span>
                                         </div>
                                       </div>
                                     </div>
@@ -2960,7 +1239,7 @@ export function LandingMarkup() {
                                 style={{ "--v2-btn-fill": "var(--v2-agent-vault-text)", "--v2-color-text-on-accent": "var(--v2-agent-vault-bg)" } as CSSProperties}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                href="https://github.com/MrSpideyNihal/Pr-agent"
+                                href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                               >
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="" aria-hidden="true">
                                   <path
@@ -2980,17 +1259,17 @@ export function LandingMarkup() {
                               <p className="run-kicker">01 · Modules</p>
                               <div className="run-stage">
                                 <div className="run-agent is-on">
-                                  <img src="/logo/hermes-agent-icon.png" alt="" width="22" height="22" />
+                                  <img src="/logo/icon.png" alt="" width="22" height="22" />
                                   <b>Early Yield Prediction</b>
                                   <em>On</em>
                                 </div>
                                 <div className="run-agent">
-                                  <img src="/logo/openclaw-icon.png" alt="" width="22" height="22" />
+                                  <img src="/logo/icon.png" alt="" width="22" height="22" />
                                   <b>Process Anomaly Detection</b>
                                   <em>On</em>
                                 </div>
                                 <div className="run-agent">
-                                  <img src="/logo/grok-bot-icon.png" alt="" width="22" height="22" />
+                                  <img src="/logo/icon.png" alt="" width="22" height="22" />
                                   <b>Explainable Process Intelligence</b>
                                   <em>On</em>
                                 </div>
@@ -3000,7 +1279,7 @@ export function LandingMarkup() {
                                   <em>On</em>
                                 </div>
                                 <div className="run-agent">
-                                  <img src="/logo/ponytail-icon.png" alt="" width="22" height="22" />
+                                  <img src="/logo/icon.png" alt="" width="22" height="22" />
                                   <b>Operating Strategy Optimization</b>
                                   <em>On</em>
                                 </div>
@@ -3054,32 +1333,32 @@ export function LandingMarkup() {
                                     <div className="gh-scene gh-scene-approve">
                                       <div className="gh-pr">
                                         <span className="gh-open"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" /></svg>Open</span>
-                                        <strong>Tighten the profile slope</strong>
-                                        <span className="gh-num">#184</span>
+                                        <strong>Demo · stable</strong>
+                                        <span className="gh-num">BR-101</span>
                                       </div>
-                                      <span className="gh-muted">lab/bio-01 · prediction pending</span>
-                                      <span className="gh-choice"><i />Annotate</span>
-                                      <span className="gh-choice is-on"><i />Recommend</span>
-                                      <span className="gh-choice"><i />Escalate</span>
+                                      <span className="gh-muted">pea starch · awaiting a reading</span>
+                                      <span className="gh-choice"><i />Hold</span>
+                                      <span className="gh-choice is-on"><i />Apply</span>
+                                      <span className="gh-choice"><i />Flag</span>
                                       <span className="gh-submit">Submit result</span>
                                       <div className="gh-approved">
                                         <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-.018-1.042.751.751 0 0 0-1.042-.018L6.75 9.19 5.28 7.72a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042l2 2a.75.75 0 0 0 1.06 0Z" /></svg>
-                                        prediction posted for #184
+                                        protein score posted for this batch
                                       </div>
                                     </div>
                                     <div className="gh-scene gh-scene-auto">
                                       <div className="gh-pr">
                                         <span className="gh-open"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" /></svg>Open</span>
-                                        <strong>Tighten the profile slope</strong>
-                                        <span className="gh-num">#184</span>
+                                        <strong>Demo · stable</strong>
+                                        <span className="gh-num">BR-101</span>
                                       </div>
-                                      <span className="gh-muted">lab/bio-01 · scheduled</span>
+                                      <span className="gh-muted">pea starch · open batch</span>
                                       <div className="gh-check">
                                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-.018-1.042.751.751 0 0 0-1.042-.018L6.75 9.19 5.28 7.72a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042l2 2a.75.75 0 0 0 1.06 0Z" /></svg>
                                         Model checks have passed
                                       </div>
-                                      <div className="gh-row"><i><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.7 8.4 9.5 3.6" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /></svg></i>yield-model / prediction</div>
-                                      <div className="gh-row"><i><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.7 8.4 9.5 3.6" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /></svg></i>drift-model / anomaly-score</div>
+                                      <div className="gh-row"><i><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.7 8.4 9.5 3.6" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /></svg></i>Model A / protein kg</div>
+                                      <div className="gh-row"><i><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.7 8.4 9.5 3.6" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /></svg></i>Fault detector / quiet</div>
                                       <span className="gh-merge">Adopt recommendation</span>
                                     </div>
                                   </div>
@@ -3181,7 +1460,7 @@ export function LandingMarkup() {
                                       className="inline-flex"
                                       style={{ color: "var(--v2-color-text-tertiary)" } as CSSProperties}
                                     >
-                                      <img alt="" width="18" height="18" className="card-mark" src="/logo/hermes-agent-icon.png" />
+                                      <img alt="" width="18" height="18" className="card-mark" src="/logo/icon.png" />
                                     </span>
                                     <span
                                       className="font-v2-mono uppercase"
@@ -3222,7 +1501,7 @@ export function LandingMarkup() {
                                       className="inline-flex"
                                       style={{ color: "var(--v2-color-text-tertiary)" } as CSSProperties}
                                     >
-                                      <img alt="" width="18" height="18" className="card-mark" src="/logo/hermes-agent-icon.png" />
+                                      <img alt="" width="18" height="18" className="card-mark" src="/logo/icon.png" />
                                     </span>
                                     <span
                                       className="font-v2-mono uppercase"
@@ -3263,7 +1542,7 @@ export function LandingMarkup() {
                                       className="inline-flex"
                                       style={{ color: "var(--v2-color-text-tertiary)" } as CSSProperties}
                                     >
-                                      <img alt="" width="18" height="18" className="card-mark" src="/logo/hermes-agent-icon.png" />
+                                      <img alt="" width="18" height="18" className="card-mark" src="/logo/icon.png" />
                                     </span>
                                     <span
                                       className="font-v2-mono uppercase"
@@ -4653,14 +2932,14 @@ export function LandingMarkup() {
                                       style={{ position: "relative", background: "#ffffff", border: "1px solid var(--v2-color-border)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", transition: "background-color 200ms ease, border-color 200ms ease, transform 200ms ease", transform: "translateY(0)", cursor: "pointer" } as CSSProperties}
                                       href="/#hermes"
                                     >
-                                      <img alt="" src="/logo/hermes-agent-icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+                                      <img alt="" src="/logo/icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
                                     </a>
                                     <a
                                       aria-label="Process Anomaly Detection"
                                       style={{ position: "relative", background: "#ffffff", border: "1px solid var(--v2-color-border)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", transition: "background-color 200ms ease, border-color 200ms ease, transform 200ms ease", transform: "translateY(0)", cursor: "pointer" } as CSSProperties}
                                       href="/#openclaw"
                                     >
-                                      <img alt="" src="/logo/openclaw-icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+                                      <img alt="" src="/logo/icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
                                     </a>
                                     <div
                                       aria-hidden="true"
@@ -4715,14 +2994,14 @@ export function LandingMarkup() {
                                       style={{ position: "relative", background: "#ffffff", border: "1px solid var(--v2-color-border)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", transition: "background-color 200ms ease, border-color 200ms ease, transform 200ms ease", transform: "translateY(0)", cursor: "pointer" } as CSSProperties}
                                       href="/#grokbot"
                                     >
-                                      <img alt="" src="/logo/grok-bot-icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+                                      <img alt="" src="/logo/icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
                                     </a>
                                     <a
                                       aria-label="Operating Strategy Optimization"
                                       style={{ position: "relative", background: "#ffffff", border: "1px solid var(--v2-color-border)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", transition: "background-color 200ms ease, border-color 200ms ease, transform 200ms ease", transform: "translateY(0)", cursor: "pointer" } as CSSProperties}
                                       href="/#ponytail"
                                     >
-                                      <img alt="" src="/logo/ponytail-icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+                                      <img alt="" src="/logo/icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
                                     </a>
                                     <a
                                       aria-label="3D Bioreactor Lab"
@@ -4762,14 +3041,14 @@ export function LandingMarkup() {
                                       style={{ position: "relative", background: "#ffffff", border: "1px solid var(--v2-color-border)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", transition: "background-color 200ms ease, border-color 200ms ease, transform 200ms ease", transform: "translateY(0)", cursor: "pointer" } as CSSProperties}
                                       href="/#hermes"
                                     >
-                                      <img alt="" src="/logo/hermes-agent-icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+                                      <img alt="" src="/logo/icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
                                     </a>
                                     <a
                                       aria-label="Process Anomaly Detection"
                                       style={{ position: "relative", background: "#ffffff", border: "1px solid var(--v2-color-border)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", transition: "background-color 200ms ease, border-color 200ms ease, transform 200ms ease", transform: "translateY(0)", cursor: "pointer" } as CSSProperties}
                                       href="/#openclaw"
                                     >
-                                      <img alt="" src="/logo/openclaw-icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+                                      <img alt="" src="/logo/icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
                                     </a>
                                     <a
                                       aria-label="Vercel"
@@ -4824,14 +3103,14 @@ export function LandingMarkup() {
                                       style={{ position: "relative", background: "#ffffff", border: "1px solid var(--v2-color-border)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", transition: "background-color 200ms ease, border-color 200ms ease, transform 200ms ease", transform: "translateY(0)", cursor: "pointer" } as CSSProperties}
                                       href="/#grokbot"
                                     >
-                                      <img alt="" src="/logo/grok-bot-icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+                                      <img alt="" src="/logo/icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
                                     </a>
                                     <a
                                       aria-label="Operating Strategy Optimization"
                                       style={{ position: "relative", background: "#ffffff", border: "1px solid var(--v2-color-border)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", transition: "background-color 200ms ease, border-color 200ms ease, transform 200ms ease", transform: "translateY(0)", cursor: "pointer" } as CSSProperties}
                                       href="/#ponytail"
                                     >
-                                      <img alt="" src="/logo/ponytail-icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+                                      <img alt="" src="/logo/icon.png" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
                                     </a>
                                     <div
                                       aria-hidden="true"
@@ -5084,7 +3363,7 @@ export function LandingMarkup() {
                                       rel="noopener noreferrer"
                                       className="inline-flex w-fit items-center self-start font-v2-sans transition-opacity hover:opacity-70"
                                       style={{ gap: "4px", color: "var(--v2-color-text-accent)", fontSize: "var(--v2-text-b2)", lineHeight: "var(--v2-lh-body)", fontWeight: "var(--v2-weight-medium)" } as CSSProperties}
-                                      href="https://github.com/MrSpideyNihal/Pr-agent"
+                                      href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                                     >
                                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                                         <path
@@ -5269,7 +3548,7 @@ export function LandingMarkup() {
                                       style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", height: "28px", maxWidth: "44%", filter: "none", opacity: "0.92", flexShrink: "0" } as CSSProperties}
                                     >
                                       <img
-                                        src="/logo/ponytail-icon.png"
+                                        src="/logo/icon.png"
                                         alt="FermaTwin"
                                         style={{ height: "100%", width: "auto", display: "block" } as CSSProperties}
                                       />
@@ -5713,7 +3992,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -5769,7 +4048,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -5825,7 +4104,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -5881,7 +4160,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -5937,7 +4216,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -5993,7 +4272,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6049,7 +4328,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6105,7 +4384,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6161,7 +4440,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6217,7 +4496,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6273,7 +4552,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6329,7 +4608,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6385,7 +4664,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6441,7 +4720,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6497,7 +4776,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6553,7 +4832,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6609,7 +4888,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6665,7 +4944,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6721,7 +5000,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6777,7 +5056,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6843,7 +5122,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6899,7 +5178,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -6955,7 +5234,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7011,7 +5290,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7067,7 +5346,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7123,7 +5402,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7179,7 +5458,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7235,7 +5514,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7291,7 +5570,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7347,7 +5626,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7403,7 +5682,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7459,7 +5738,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7515,7 +5794,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7571,7 +5850,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7627,7 +5906,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7683,7 +5962,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7739,7 +6018,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7795,7 +6074,7 @@ export function LandingMarkup() {
                               >
                                 <div className="flex items-center" style={{ gap: "12px", minHeight: "36px" } as CSSProperties}>
                                   <img
-                                    src="/logo/hermes-agent-icon.png"
+                                    src="/logo/icon.png"
                                     alt="FermaTwin"
                                     width="36"
                                     height="36"
@@ -7907,7 +6186,7 @@ export function LandingMarkup() {
                                   style={{ color: "var(--v2-cta-text)" } as CSSProperties}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  href="https://github.com/MrSpideyNihal/Pr-agent"
+                                  href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                                 >
                                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="" aria-hidden="true">
                                     <path
@@ -8011,7 +6290,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Explainable Process Intelligence
                           </a>
@@ -8022,7 +6301,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Process Anomaly Detection
                           </a>
@@ -8042,7 +6321,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Product notes
                           </a>
@@ -8066,7 +6345,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Experiment Comparison
                           </a>
@@ -8077,7 +6356,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Simulations
                           </a>
@@ -8088,7 +6367,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Predictions
                           </a>
@@ -8099,7 +6378,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Anomaly checks
                           </a>
@@ -8110,7 +6389,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Energy optimization
                           </a>
@@ -8121,7 +6400,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Lab connection
                           </a>
@@ -8132,7 +6411,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Your own models
                           </a>
@@ -8143,7 +6422,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Simulation safety
                           </a>
@@ -8154,7 +6433,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Bring your own feeds
                           </a>
@@ -8165,7 +6444,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             The source
                           </a>
@@ -8222,7 +6501,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Status
                           </a>
@@ -8233,7 +6512,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             {"Feedback & Requests"}
                           </a>
@@ -8244,7 +6523,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Product notes
                           </a>
@@ -8255,7 +6534,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             Contributing
                           </a>
@@ -8319,7 +6598,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             The source
                           </a>
@@ -8352,7 +6631,7 @@ export function LandingMarkup() {
                             rel="noopener noreferrer"
                             className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                             style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                            href="https://github.com/MrSpideyNihal/Pr-agent"
+                            href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                           >
                             GitHub
                           </a>
@@ -8385,7 +6664,7 @@ export function LandingMarkup() {
                     </span>
                     <a
                       className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 text-[color:var(--v2-nav-text)] transition-colors hover:text-[color:var(--v2-color-text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--v2-color-focus)] print:hidden"
-                      href="https://github.com/MrSpideyNihal/Pr-agent"
+                      href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -8407,7 +6686,7 @@ export function LandingMarkup() {
                         rel="noopener noreferrer"
                         className="v2-footer-link inline-flex items-center font-v2-sans text-v2-b3 transition-colors hover:text-v2-text"
                         style={{ color: "var(--v2-nav-text)" } as CSSProperties}
-                        href="https://github.com/MrSpideyNihal/Pr-agent"
+                        href="https://github.com/FirePheonix/team_stupid_fellows_hack_the_fork"
                       >
                         Trust Center
                       </a>

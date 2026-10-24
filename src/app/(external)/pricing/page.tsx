@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 
 import { SiteChrome } from "../_components/landing/site-chrome";
 
-export const metadata: Metadata = { title: "Pricing · GitCrew" };
+export const metadata: Metadata = { title: "Pricing · FermaTwin" };
 
 const tiers = [
-  ["Starter", "$0", "The open source agents, on the pull requests you already open."],
-  ["Team", "Together", "Every agent on one contract, managed and billed as a single allowance."],
-  ["Scale", "Custom", "The same review contract, with a larger allowance for the repos that need it."],
+  ["Lab", "Open", "The simulated BR-101 batch, Model A, and Model B. No account."],
+  ["History", "This browser", "Finished runs stay on this computer until a database is connected."],
+  ["Billing", "Off", "Razorpay is in the repo and is not offered."],
 ];
 
 export default function PricingPage() {
@@ -15,11 +15,10 @@ export default function PricingPage() {
     <SiteChrome>
       <p className="mkt-kicker">Pricing</p>
       <h1>
-        Multiple agents, <span className="mkt-mark">one bill</span>.
+        The lab is <span className="mkt-mark">open</span>.
       </h1>
       <p className="mkt-lede">
-        Install the GitHub App once. AntiSlop, Hermes, OpenClaw, Grokbot, OpenAI Dots, and Ponytail run on the same
-        contract, and the managed allowance is billed together. Checkout is not live.
+        FermaTwin scores a yeast-protein batch while it is still running. Checkout is not live.
       </p>
       <div className="mkt-grid">
         {tiers.map(([name, price, copy]) => (

@@ -120,7 +120,7 @@ function toggleSwitch(button: HTMLElement) {
 
 function ready() {
   const stack = document.querySelector(".collage-stack");
-  if (!(stack instanceof HTMLElement) || stack.dataset.collageReady) return;
+  if (!(stack instanceof HTMLElement) || stack.dataset.heroCards || stack.dataset.collageReady) return;
   stack.dataset.collageReady = "1";
   stack.classList.remove("is-locked");
 

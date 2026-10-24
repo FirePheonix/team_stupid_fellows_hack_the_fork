@@ -69,20 +69,21 @@ export function SiteChrome({ children }: { children: ReactNode }) {
           style={{ maxWidth: "var(--v2-max-width)", padding: "0 var(--v2-grid-padding)" }}
         >
           <a
-            className="font-v2-sans text-[15px] font-medium tracking-tight"
+            className="flex items-center font-v2-sans text-[15px] font-medium tracking-tight"
             href="/"
-            style={{ color: "var(--v2-nav-text)", letterSpacing: "-0.04em" }}
+            style={{ color: "var(--v2-nav-text)", letterSpacing: "-0.04em", gap: "8px" }}
           >
-            GitCrew
+            <img src="/logo/icon.png" alt="" width={22} height={22} />
+            FermaTwin
           </a>
           <div className="hidden h-full items-stretch gap-5 min-[1100px]:flex xl:gap-8">
-            <Menu id="mkt-agents" label="Agents">
-              <MenuLink href="/#antislop">AntiSlop</MenuLink>
-              <MenuLink href="/#hermes">Hermes</MenuLink>
-              <MenuLink href="/#openclaw">OpenClaw</MenuLink>
-              <MenuLink href="/#grokbot">Grokbot</MenuLink>
-              <MenuLink href="/#ponytail">Ponytail</MenuLink>
-              <MenuLink href="/#openai-dots">OpenAI Dots</MenuLink>
+            <Menu id="mkt-agents" label="Modules">
+              <MenuLink href="/#antislop">3D Bioreactor Lab</MenuLink>
+              <MenuLink href="/#hermes">Early Yield Prediction</MenuLink>
+              <MenuLink href="/#openclaw">Process Anomaly Detection</MenuLink>
+              <MenuLink href="/#grokbot">Explainable Process Intelligence</MenuLink>
+              <MenuLink href="/#ponytail">Operating Strategy Optimization</MenuLink>
+              <MenuLink href="/dashboard/compare">Experiment Comparison</MenuLink>
             </Menu>
             <a
               className="v2-nav-link flex h-full items-center font-v2-sans text-v2-b3"
@@ -119,7 +120,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
           style={{ maxWidth: "var(--v2-max-width)", padding: "28px var(--v2-grid-padding)" }}
         >
           <a className="font-v2-sans text-[15px] font-medium" href="/" style={{ color: "var(--v2-nav-text)" }}>
-            GitCrew
+            FermaTwin
           </a>
           <div className="flex flex-wrap gap-5 font-v2-sans text-v2-b3" style={{ color: "var(--v2-nav-text)" }}>
             <a href="/pricing">Pricing</a>

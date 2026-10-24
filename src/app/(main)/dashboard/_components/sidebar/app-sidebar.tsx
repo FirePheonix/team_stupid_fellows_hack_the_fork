@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
-import { GitBranch } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 
 import {
@@ -43,7 +43,7 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link prefetch={false} href="/dashboard">
-                <GitBranch />
+                <Image src="/logo/icon.png" alt="" width={16} height={16} className="size-4" />
                 <span className="font-semibold text-base">{APP_CONFIG.name}</span>
               </Link>
             </SidebarMenuButton>

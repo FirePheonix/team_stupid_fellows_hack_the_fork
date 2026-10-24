@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? process.env.BASE_URL ?? "http://localhost:3000"),
   title: APP_CONFIG.meta.title,
   description: APP_CONFIG.meta.description,
+  icons: {
+    icon: "/logo/icon.png",
+    apple: "/logo/icon.png",
+    shortcut: "/logo/icon.png",
+  },
   twitter: {
     card: "summary_large_image",
   },
