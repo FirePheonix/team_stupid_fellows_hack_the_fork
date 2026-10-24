@@ -11,7 +11,7 @@ import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { correlations, explainProcess, recommend } from "@/lib/fermentation/insights";
+import { correlations, explainProcess } from "@/lib/fermentation/insights";
 import { type ProcessState, SCENARIOS, type SetpointKey } from "@/lib/fermentation/model";
 import { downloadCsv, useFermentation, usePrediction } from "@/stores/fermentation-store";
 
@@ -288,20 +288,15 @@ export function TrendsView() {
 
 export function InsightsView() {
   const live = useFermentation((s) => s.live);
-  const bounds = useFermentation((s) => s.bounds);
-  const preview = useFermentation((s) => s.preview);
-  const setPreview = useFermentation((s) => s.setPreview);
-  const applyPreview = useFermentation((s) => s.applyPreview);
   const prediction = usePrediction();
   const active = useActiveAlarms();
-  const text = explainProcess(live.state, active, prediction, live.scenario);
-  const advice = recommend(live.state, live.setpoints, live.scenario, bounds, active);
+  const text = explainProcess(live.state, active, prediction);
   const links = correlations(live.samples);
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Insights"
-        description="Sentences below use the current simulation values and the baseline projection only. The protein desk adds the score, selling price, and feedstock row on the same run."
+        description="Numbers come from Model A (run) and Model B (amino-acid research row). The paragraph only restates them."
       />
       <ProteinDesk />
       <div className="grid gap-4 lg:grid-cols-3">
@@ -344,39 +339,6 @@ export function InsightsView() {
             </ul>
           ) : (
             <p>{links.note}</p>
-          )}
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Suggested change</CardTitle>
-          <CardDescription>
-            Preview runs the same kinetic model with the proposed setpoints. It does not change the live batch until you
-            apply it.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3 text-sm">
-          {advice ? (
-            <>
-              <p className="font-medium">{advice.title}</p>
-              <p>{advice.reason}</p>
-              <p>
-                Current projection {advice.currentYield.toFixed(1)} g/L at {advice.currentPowerKw} kW illustrative.
-                Proposed {advice.proposedYield.toFixed(1)} g/L at {advice.proposedPowerKw} kW illustrative.
-              </p>
-              <p className="text-muted-foreground">{advice.effect}</p>
-              <div className="flex gap-2">
-                <Button type="button" variant="outline" onClick={() => setPreview(advice.proposed)}>
-                  Preview
-                </Button>
-                <Button type="button" onClick={applyPreview} disabled={!preview}>
-                  Apply preview
-                </Button>
-              </div>
-              {preview ? <p>Preview is loaded. Apply copies those setpoints into the running batch.</p> : null}
-            </>
-          ) : (
-            <p>No setpoint change is suggested. The active rules are clear at this sensitivity.</p>
           )}
         </CardContent>
       </Card>

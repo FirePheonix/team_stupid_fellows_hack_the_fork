@@ -10,6 +10,7 @@ import {
   type Setpoints,
   TARGET_YIELD_G_L,
 } from "./model";
+import { faultEvidence, type ProteinForecast, readFault } from "./model-a";
 
 export type Alarm = {
   id: string;
@@ -129,6 +130,32 @@ export function evaluateAlarms(
   return alarms;
 }
 
+/** Process-fault alarm from Model A's detector, with the most deviant signals as evidence. */
+export function modelAlarms(samples: ProcessState[], sensitivity: number): Alarm[] {
+  const last = samples.at(-1);
+  if (!last) return [];
+  const reading = readFault(samples, sensitivity);
+  if (!reading.fault) return [];
+  const evidence = faultEvidence(last);
+  const lead = evidence[0];
+  const PART: Record<string, string> = { ph: "ph", dissolved_oxygen: "dissolvedOxygen" };
+  const parameter = PART[lead?.signal ?? ""] ?? "process";
+  return [
+    {
+      id: `model-${last.tMin}`,
+      parameter,
+      partId: parameter === "process" ? "broth" : parameter,
+      severity: reading.score > reading.threshold * 2 ? "high" : "medium",
+      tMin: last.tMin,
+      evidence: `Fault score ${reading.score.toFixed(2)} over threshold ${reading.threshold.toFixed(2)} at ${last.tMin} min. Furthest from a normal batch at this minute: ${evidence
+        .map((e) => `${e.label} ${e.sigma > 0 ? "+" : ""}${e.sigma.toFixed(1)}σ`)
+        .join(", ")}.`,
+      reason: "Process fault suspected. Contamination is not confirmed.",
+      contaminationConfirmed: false,
+    },
+  ];
+}
+
 export function rememberAlarms(history: Alarm[], fresh: Alarm[]): Alarm[] {
   const next = [...history];
   for (const item of fresh) {
@@ -208,24 +235,21 @@ export function recommend(
 export function explainProcess(
   state: ProcessState,
   alarms: Alarm[],
-  prediction: Prediction,
-  scenario: Scenario,
+  forecast: ProteinForecast,
 ): { happening: string; why: string; next: string } {
   const lead = alarms[0];
+  const remaining = Math.max(0, BATCH_MINUTES - state.tMin);
   if (!lead) {
     return {
-      happening: `At ${state.tMin} min the broth holds ${state.product.toFixed(2)} g/L product, ${state.biomass.toFixed(2)} g/L biomass, and ${state.dissolvedOxygen.toFixed(1)}% dissolved oxygen.`,
-      why: "Those readings are inside the bands for the current sensitivity. No deviation rule is firing.",
-      next: `The baseline model puts the batch near ${prediction.predictedYield.toFixed(1)} g/L at the planned end, ${prediction.etaMin} min from now. Keep watching dissolved oxygen against its setpoint.`,
+      happening: `At ${state.tMin} min the broth holds ${state.biomass.toFixed(1)} g/L yeast, ${state.ethanol.toFixed(1)} g/L ethanol, and ${state.dissolvedOxygen.toFixed(0)}% dissolved oxygen.`,
+      why: "Model A's fault score is under the threshold for this sensitivity, so the run looks like a normal batch at this minute.",
+      next: `Model A predicts ${forecast.kg.toFixed(1)} kg protein (80% range ${forecast.low.toFixed(1)}–${forecast.high.toFixed(1)} kg) at the planned end, ${remaining} min from now.`,
     };
   }
   return {
     happening: lead.evidence,
     why: lead.reason,
-    next:
-      scenario === "contamination" && lead.parameter === "off-gas CO2"
-        ? "Check the sterile boundary and compare this CO2 and product trend with a finished stable batch. Do not record the batch as contaminated from this signal alone."
-        : `The baseline projection is ${prediction.predictedYield.toFixed(1)} ± ${prediction.uncertainty.toFixed(1)} g/L. Review the suggested setpoint change before applying it.`,
+    next: `Model A predicts ${forecast.kg.toFixed(1)} kg protein (${forecast.low.toFixed(1)}–${forecast.high.toFixed(1)} kg). Check the candidate table before changing air or agitation.`,
   };
 }
 

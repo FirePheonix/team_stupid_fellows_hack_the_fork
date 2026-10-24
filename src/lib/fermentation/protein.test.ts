@@ -1,27 +1,34 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_SETPOINTS, initialState, project } from "./model";
-import { parseAsk, readProtein } from "./protein";
+import { parseOffline, runFromState } from "./agent";
+import { BATCH_MINUTES, DEFAULT_SETPOINTS, runMinutes } from "./model";
+import { forecastProtein, readFault } from "./model-a";
+import { modelB } from "./protein";
 
-describe("protein reading", () => {
-  it("scores a projected pea batch above an oxygen-limited one", () => {
-    const start = initialState(DEFAULT_SETPOINTS);
-    const stable = project(start, DEFAULT_SETPOINTS, "stable");
-    const limited = project(start, DEFAULT_SETPOINTS, "oxygen-limitation");
-    const pea = readProtein(stable, DEFAULT_SETPOINTS, "stable", "pea-starch-hydrolysate", 50);
-    const starved = readProtein(limited, DEFAULT_SETPOINTS, "oxygen-limitation", "pea-starch-hydrolysate", 50);
-
-    expect(pea.limiting).toBe("Met + Cys");
-    expect(pea.score).toBeGreaterThan(0.55);
-    expect(pea.score).toBeLessThanOrEqual(1);
-    expect(starved.proteinKg).toBeLessThan(pea.proteinKg);
-    expect(starved.score).toBeLessThan(pea.score);
+describe("protein desk", () => {
+  it("names sulfur amino acids as limiting from the published yeast row", () => {
+    const b = modelB("pea-starch-hydrolysate", "molasses");
+    expect(b.available).toBe(true);
+    expect(b.limitingAminoAcid).toBe("Met + Cys");
+    expect(b.comparison?.higher).toBe("equal");
   });
 
-  it("turns a sentence into a feedstock and an air change", () => {
-    const json = parseAsk("Pea-starch hydrolysate, less air. Score it.", "glucose");
-    expect(json.feedstock).toBe("pea-starch-hydrolysate");
-    expect(json.aerationDelta).toBe(-0.35);
-    expect(json.intent).toBe("score");
+  it("predicts less protein and raises a fault when oxygen is limited", () => {
+    const stable = runMinutes("stable", DEFAULT_SETPOINTS, BATCH_MINUTES * 0.6, 2, "glucose");
+    const limited = runMinutes("oxygen-limitation", DEFAULT_SETPOINTS, BATCH_MINUTES * 0.6, 2, "glucose");
+    expect(forecastProtein(limited, DEFAULT_SETPOINTS, "glucose").kg).toBeLessThan(
+      forecastProtein(stable, DEFAULT_SETPOINTS, "glucose").kg,
+    );
+    expect(readFault(limited, 50).fault).toBe(true);
+    expect(readFault(stable, 50).fault).toBe(false);
+  });
+
+  it("changes only the fields a sentence names", () => {
+    const current = runFromState("glucose", DEFAULT_SETPOINTS);
+    const next = parseOffline("Pea-starch hydrolysate, less air.", current, null);
+    expect(next.feedstock).toBe("pea-starch-hydrolysate");
+    expect(next.settings.aeration).toBeLessThan(current.settings.aeration);
+    expect(next.settings.agitation).toBe(current.settings.agitation);
+    expect(next.settings.ph).toBe(current.settings.ph);
   });
 });

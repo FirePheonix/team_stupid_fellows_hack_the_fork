@@ -1,0 +1,268 @@
+{
+  "yield": [
+    {
+      "group": "held-out normal",
+      "frac": 0.2,
+      "n": 140,
+      "model_mape": 4.18,
+      "model_mae_kg": 0.454,
+      "baseline_mean_mape": 20.68,
+      "baseline_so_far_mape": 88.93,
+      "coverage_80": 84.3,
+      "halfwidth_kg": 0.863
+    },
+    {
+      "group": "held-out normal",
+      "frac": 0.4,
+      "n": 140,
+      "model_mape": 3.88,
+      "model_mae_kg": 0.421,
+      "baseline_mean_mape": 20.68,
+      "baseline_so_far_mape": 79.47,
+      "coverage_80": 90.7,
+      "halfwidth_kg": 0.825
+    },
+    {
+      "group": "held-out normal",
+      "frac": 0.6,
+      "n": 140,
+      "model_mape": 3.5,
+      "model_mae_kg": 0.378,
+      "baseline_mean_mape": 20.68,
+      "baseline_so_far_mape": 62.12,
+      "coverage_80": 89.3,
+      "halfwidth_kg": 0.781
+    },
+    {
+      "group": "held-out normal",
+      "frac": 0.8,
+      "n": 140,
+      "model_mape": 3.04,
+      "model_mae_kg": 0.33,
+      "baseline_mean_mape": 20.68,
+      "baseline_so_far_mape": 33.3,
+      "coverage_80": 91.4,
+      "halfwidth_kg": 0.716
+    },
+    {
+      "group": "held-out wide range",
+      "frac": 0.2,
+      "n": 300,
+      "model_mape": 8.69,
+      "model_mae_kg": 0.611,
+      "baseline_mean_mape": 53.85,
+      "baseline_so_far_mape": 83.78,
+      "coverage_80": 78.3,
+      "halfwidth_kg": 0.863
+    },
+    {
+      "group": "held-out wide range",
+      "frac": 0.4,
+      "n": 300,
+      "model_mape": 8.08,
+      "model_mae_kg": 0.581,
+      "baseline_mean_mape": 53.85,
+      "baseline_so_far_mape": 73.15,
+      "coverage_80": 78.7,
+      "halfwidth_kg": 0.825
+    },
+    {
+      "group": "held-out wide range",
+      "frac": 0.6,
+      "n": 300,
+      "model_mape": 7.5,
+      "model_mae_kg": 0.544,
+      "baseline_mean_mape": 53.85,
+      "baseline_so_far_mape": 56.61,
+      "coverage_80": 78.7,
+      "halfwidth_kg": 0.781
+    },
+    {
+      "group": "held-out wide range",
+      "frac": 0.8,
+      "n": 300,
+      "model_mape": 7.0,
+      "model_mae_kg": 0.493,
+      "baseline_mean_mape": 53.85,
+      "baseline_so_far_mape": 32.52,
+      "coverage_80": 78.0,
+      "halfwidth_kg": 0.716
+    },
+    {
+      "group": "held-out drift",
+      "frac": 0.2,
+      "n": 90,
+      "model_mape": 18.88,
+      "model_mae_kg": 1.423,
+      "baseline_mean_mape": 18.32,
+      "baseline_so_far_mape": 87.06,
+      "coverage_80": 55.6,
+      "halfwidth_kg": 0.863
+    },
+    {
+      "group": "held-out drift",
+      "frac": 0.4,
+      "n": 90,
+      "model_mape": 18.25,
+      "model_mae_kg": 1.385,
+      "baseline_mean_mape": 18.32,
+      "baseline_so_far_mape": 76.22,
+      "coverage_80": 55.6,
+      "halfwidth_kg": 0.825
+    },
+    {
+      "group": "held-out drift",
+      "frac": 0.6,
+      "n": 90,
+      "model_mape": 17.27,
+      "model_mae_kg": 1.31,
+      "baseline_mean_mape": 18.32,
+      "baseline_so_far_mape": 57.69,
+      "coverage_80": 47.8,
+      "halfwidth_kg": 0.781
+    },
+    {
+      "group": "held-out drift",
+      "frac": 0.8,
+      "n": 90,
+      "model_mape": 15.2,
+      "model_mae_kg": 1.153,
+      "baseline_mean_mape": 18.32,
+      "baseline_so_far_mape": 30.09,
+      "coverage_80": 51.1,
+      "halfwidth_kg": 0.716
+    }
+  ],
+  "fault": {
+    "threshold": 0.9583,
+    "held_out_normal_batches": 140,
+    "false_alarm_batches_pct": 7.9,
+    "by_scenario": {
+      "contamination": {
+        "n": 27,
+        "detection_pct": 3.7,
+        "median_delay_min": 244.0,
+        "alarm_before_onset_pct": 0.0
+      },
+      "oxygen-limitation": {
+        "n": 27,
+        "detection_pct": 100.0,
+        "median_delay_min": 16.0,
+        "alarm_before_onset_pct": 0.0
+      },
+      "ph-drift": {
+        "n": 36,
+        "detection_pct": 97.2,
+        "median_delay_min": 144.0,
+        "alarm_before_onset_pct": 2.8
+      }
+    },
+    "sensitivity_curve": [
+      {
+        "false_alarm_pct": 1,
+        "threshold": 1.5538
+      },
+      {
+        "false_alarm_pct": 2,
+        "threshold": 1.2473
+      },
+      {
+        "false_alarm_pct": 5,
+        "threshold": 0.9583
+      },
+      {
+        "false_alarm_pct": 10,
+        "threshold": 0.839
+      },
+      {
+        "false_alarm_pct": 20,
+        "threshold": 0.7582
+      },
+      {
+        "false_alarm_pct": 30,
+        "threshold": 0.6622
+      },
+      {
+        "false_alarm_pct": 50,
+        "threshold": 0.576
+      }
+    ]
+  },
+  "drivers": {
+    "0.2": {
+      "dissolved_oxygen": 0.0235,
+      "ph": -0.0018,
+      "temperature": 0.0786,
+      "agitation": 0.0023,
+      "aeration": 0.0027,
+      "feed_rate": 0.0184,
+      "biomass": 0.0523,
+      "co2": 0.0028,
+      "substrate": 0.0255,
+      "ethanol": 0.0272,
+      "sp_ph": -0.0029,
+      "sp_temperature": 1.2171,
+      "sp_agitation": 0.3347,
+      "sp_aeration": 0.1116,
+      "sp_feed": 0.8833,
+      "feedstock": 0.1178
+    },
+    "0.4": {
+      "dissolved_oxygen": 0.0241,
+      "ph": -0.0012,
+      "temperature": 0.0739,
+      "agitation": 0.0035,
+      "aeration": 0.0057,
+      "feed_rate": 0.0137,
+      "biomass": 0.0791,
+      "co2": 0.0043,
+      "substrate": 0.0154,
+      "ethanol": 0.0911,
+      "sp_ph": -0.0,
+      "sp_temperature": 1.1902,
+      "sp_agitation": 0.3213,
+      "sp_aeration": 0.1147,
+      "sp_feed": 0.9055,
+      "feedstock": 0.1015
+    },
+    "0.6": {
+      "dissolved_oxygen": 0.0109,
+      "ph": -0.0004,
+      "temperature": 0.0672,
+      "agitation": 0.0001,
+      "aeration": 0.0035,
+      "feed_rate": 0.0109,
+      "biomass": 0.1165,
+      "co2": 0.0056,
+      "substrate": 0.0069,
+      "ethanol": 0.1582,
+      "sp_ph": 0.0006,
+      "sp_temperature": 1.1363,
+      "sp_agitation": 0.3133,
+      "sp_aeration": 0.108,
+      "sp_feed": 0.9235,
+      "feedstock": 0.1229
+    },
+    "0.8": {
+      "dissolved_oxygen": 0.018,
+      "ph": -0.0001,
+      "temperature": 0.0656,
+      "agitation": 0.0004,
+      "aeration": 0.0036,
+      "feed_rate": 0.009,
+      "biomass": 0.2612,
+      "co2": 0.0031,
+      "substrate": 0.0028,
+      "ethanol": 0.1471,
+      "sp_ph": 0.0002,
+      "sp_temperature": 1.1219,
+      "sp_agitation": 0.2866,
+      "sp_aeration": 0.1016,
+      "sp_feed": 0.9632,
+      "feedstock": 0.1386
+    }
+  },
+  "train_mean_kg": 8.41339,
+  "n_batches": 2650,
+  "n_test_batches": 530
+}

@@ -1,4 +1,13 @@
-import { Bell, FlaskConical, LayoutDashboard, LineChart, type LucideIcon, Settings, Sparkles } from "lucide-react";
+import {
+  Bell,
+  FlaskConical,
+  Gauge,
+  LayoutDashboard,
+  LineChart,
+  type LucideIcon,
+  Settings,
+  Sparkles,
+} from "lucide-react";
 
 export type NavBadge = "new" | "soon";
 
@@ -57,6 +66,7 @@ export const sidebarItems: NavGroup[] = [
       { id: "alarms", title: "Alarms", url: "/dashboard/alarms", icon: Bell },
       { id: "trends", title: "Trends", url: "/dashboard/trends", icon: LineChart },
       { id: "insights", title: "Insights", url: "/dashboard/insights", icon: Sparkles },
+      { id: "benchmark", title: "Benchmark", url: "/dashboard/benchmark", icon: Gauge },
     ],
   },
   {

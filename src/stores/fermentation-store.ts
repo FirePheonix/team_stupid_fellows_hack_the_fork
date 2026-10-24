@@ -2,13 +2,14 @@
 
 import { create } from "zustand";
 
-import { type Alarm, evaluateAlarms, predictYield, rememberAlarms, samplesToCsv } from "@/lib/fermentation/insights";
+import { type Alarm, modelAlarms, rememberAlarms, samplesToCsv } from "@/lib/fermentation/insights";
 import {
   BATCH_MINUTES,
   type Bounds,
   clampSetpoints,
   DEFAULT_BOUNDS,
   DEFAULT_SETPOINTS,
+  type FeedstockId,
   initialState,
   type ProcessState,
   REACTOR_ID,
@@ -18,6 +19,7 @@ import {
   type Setpoints,
   step,
 } from "@/lib/fermentation/model";
+import { forecastProtein } from "@/lib/fermentation/model-a";
 
 export type BatchStatus = "idle" | "running" | "paused" | "finished";
 
@@ -34,10 +36,11 @@ export type StoredBatch = {
   finishedAt: string | null;
 };
 
-type LiveBatch = StoredBatch & { state: ProcessState };
+type LiveBatch = StoredBatch & { state: ProcessState; feedstock?: FeedstockId };
 
 type FermentationStore = {
   bounds: Bounds;
+  feedstock: FeedstockId;
   sensitivity: number;
   speed: 1 | 4 | 12;
   dissect: boolean;
@@ -51,6 +54,7 @@ type FermentationStore = {
   reset: () => void;
   finish: () => void;
   setScenario: (scenario: Scenario) => void;
+  setFeedstock: (feedstock: FeedstockId) => void;
   setSetpoint: (key: SetpointKey, value: number) => void;
   setSensitivity: (value: number) => void;
   setBound: (key: SetpointKey, edge: "min" | "max", value: number) => void;
@@ -62,10 +66,11 @@ type FermentationStore = {
   hydrate: () => void;
 };
 
-const STORAGE_KEY = "fermatwin.v1";
+const STORAGE_KEY = "fermatwin.v2";
 
 export const useFermentation = create<FermentationStore>((set, get) => ({
   bounds: DEFAULT_BOUNDS,
+  feedstock: "pea-starch-hydrolysate",
   sensitivity: 50,
   speed: 1,
   dissect: false,
@@ -74,17 +79,16 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
   history: seedHistory(),
   live: idleBatch(DEFAULT_SETPOINTS, "stable", "BR-101 live"),
   tick: () => {
-    const { live, speed, sensitivity } = get();
+    const { live, speed, sensitivity, feedstock } = get();
     if (live.status !== "running") return;
     let state = live.state;
     const samples = live.samples.slice();
     let alarms = live.alarms;
     const steps = speed;
     for (let i = 0; i < steps; i++) {
-      state = step(state, live.setpoints, live.scenario);
+      state = step(state, live.setpoints, live.scenario, feedstock);
       samples.push(state);
-      const earlier = samples[Math.max(0, samples.length - 6)] ?? null;
-      alarms = rememberAlarms(alarms, evaluateAlarms(state, earlier, live.setpoints, live.scenario, sensitivity));
+      alarms = rememberAlarms(alarms, modelAlarms(samples, sensitivity));
       if (state.tMin >= BATCH_MINUTES) break;
     }
     const done = state.tMin >= BATCH_MINUTES;
@@ -101,14 +105,14 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
     else persist(get());
   },
   start: () => {
-    const { live, bounds } = get();
+    const { live, bounds, feedstock } = get();
     if (live.status === "paused") {
       set({ live: { ...live, status: "running" } });
       return;
     }
     if (live.status === "running") return;
     const setpoints = clampSetpoints(live.setpoints, bounds);
-    const state = initialState(setpoints);
+    const state = initialState(setpoints, feedstock);
     set({
       preview: null,
       live: {
@@ -138,6 +142,10 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
     archive(get, set, next);
   },
   setScenario: (scenario) => set({ live: { ...get().live, scenario } }),
+  setFeedstock: (feedstock) => {
+    set({ feedstock });
+    persist(get());
+  },
   setSetpoint: (key, value) => {
     const { live, bounds } = get();
     const setpoints = clampSetpoints({ ...live.setpoints, [key]: value }, bounds);
@@ -168,6 +176,7 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
       const saved = JSON.parse(raw) as Partial<FermentationStore>;
       set({
         bounds: saved.bounds ?? get().bounds,
+        feedstock: saved.feedstock ?? get().feedstock,
         sensitivity: saved.sensitivity ?? get().sensitivity,
         history: saved.history?.length ? saved.history : get().history,
         live: saved.live ?? get().live,
@@ -178,12 +187,11 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
   },
 }));
 
+/** Model A's final-protein forecast from the samples so far. */
 export function usePrediction() {
   const live = useFermentation((s) => s.live);
-  const bounds = useFermentation((s) => s.bounds);
-  const sensitivity = useFermentation((s) => s.sensitivity);
-  const active = evaluateAlarms(live.state, earlierSample(live.samples), live.setpoints, live.scenario, sensitivity);
-  return predictYield(live.state, live.setpoints, live.scenario, bounds, active.length);
+  const feedstock = useFermentation((s) => s.feedstock);
+  return forecastProtein(live.samples, live.setpoints, feedstock);
 }
 
 export function downloadCsv(samples: ProcessState[], name: string) {
@@ -233,10 +241,6 @@ function archive(get: () => FermentationStore, set: (partial: Partial<Fermentati
   void import("@/server/fermentation-actions").then((mod) => mod.saveFermentationBatch(record)).catch(() => undefined);
 }
 
-function earlierSample(samples: ProcessState[]) {
-  return samples[Math.max(0, samples.length - 6)] ?? null;
-}
-
 function seedHistory(): StoredBatch[] {
   return [
     seeded("demo-stable", "Demo · stable", "stable", "2026-06-10T05:00:00.000Z"),
@@ -245,16 +249,9 @@ function seedHistory(): StoredBatch[] {
 }
 
 function seeded(id: string, name: string, scenario: Scenario, startedAt: string): StoredBatch {
-  const samples = runMinutes(scenario, DEFAULT_SETPOINTS, BATCH_MINUTES, 10);
+  const samples = runMinutes(scenario, DEFAULT_SETPOINTS, BATCH_MINUTES, 10, "pea-starch-hydrolysate");
   let alarms: Alarm[] = [];
-  for (let i = 0; i < samples.length; i++) {
-    const state = samples[i];
-    if (!state) continue;
-    alarms = rememberAlarms(
-      alarms,
-      evaluateAlarms(state, samples[Math.max(0, i - 2)] ?? null, DEFAULT_SETPOINTS, scenario, 50),
-    );
-  }
+  for (let i = 1; i <= samples.length; i++) alarms = rememberAlarms(alarms, modelAlarms(samples.slice(0, i), 50));
   return {
     id,
     name,
@@ -269,8 +266,14 @@ function seeded(id: string, name: string, scenario: Scenario, startedAt: string)
   };
 }
 
-function persist(state: Pick<FermentationStore, "bounds" | "sensitivity" | "history" | "live">) {
+function persist(state: Pick<FermentationStore, "bounds" | "feedstock" | "sensitivity" | "history" | "live">) {
   if (typeof window === "undefined") return;
-  const payload = { bounds: state.bounds, sensitivity: state.sensitivity, history: state.history, live: state.live };
+  const payload = {
+    bounds: state.bounds,
+    feedstock: state.feedstock,
+    sensitivity: state.sensitivity,
+    history: state.history,
+    live: state.live,
+  };
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
 }

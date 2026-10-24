@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { type Alarm, evaluateAlarms } from "@/lib/fermentation/insights";
+import { type Alarm, modelAlarms } from "@/lib/fermentation/insights";
 import { SCENARIOS, type SetpointKey } from "@/lib/fermentation/model";
+import { driversAt } from "@/lib/fermentation/model-a";
 import { INFO } from "@/lib/fermentation/protein";
 import { useFermentation, usePrediction } from "@/stores/fermentation-store";
 
@@ -157,7 +158,8 @@ export function ReadingGrid() {
     ["Biomass", `${state.biomass.toFixed(2)} g/L`],
     ["Substrate", `${state.substrate.toFixed(2)} g/L`],
     ["Off-gas CO2", state.co2.toFixed(2)],
-    ["Product", `${state.product.toFixed(2)} g/L`],
+    ["Protein", `${state.product.toFixed(2)} g/L`],
+    ["Ethanol", `${state.ethanol.toFixed(2)} g/L`],
     ["Volume", `${state.volume.toFixed(0)} L`],
     ["Elapsed", `${state.tMin} min`],
   ];
@@ -175,28 +177,28 @@ export function ReadingGrid() {
 
 export function YieldCard() {
   const prediction = usePrediction();
+  const drivers = driversAt(prediction.frac).slice(0, 4);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Predicted yield</CardTitle>
-        <CardDescription>{prediction.disclaimer}</CardDescription>
+        <CardTitle>Predicted final protein</CardTitle>
+        <CardDescription>
+          Predicted from the run model (Model A, gradient-boosted trees trained on held-out-tested yeast batches).
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 text-sm">
         <div className="flex items-end justify-between">
-          <span className="font-medium text-3xl">{prediction.predictedYield.toFixed(1)}</span>
-          <span className="text-muted-foreground">g/L ± {prediction.uncertainty.toFixed(1)}</span>
+          <span className="font-medium text-3xl">{prediction.kg.toFixed(1)}</span>
+          <span className="text-muted-foreground">
+            kg · 80% range {prediction.low.toFixed(1)}–{prediction.high.toFixed(1)}
+          </span>
         </div>
-        <p>
-          Target for this recipe: {prediction.targetYield} g/L. Planned end in {prediction.etaMin} min.
-        </p>
+        <p>Using samples up to {Math.round(prediction.frac * 100)}% of the batch.</p>
         <ul className="space-y-1">
-          {prediction.influences.slice(0, 4).map((item) => (
-            <li key={item.parameter} className="flex justify-between">
-              <span>{item.parameter}</span>
-              <span className="text-muted-foreground">
-                {item.deltaYield >= 0 ? "+" : ""}
-                {item.deltaYield.toFixed(2)} g/L if nudged
-              </span>
+          {drivers.map((item) => (
+            <li key={item.name} className="flex justify-between">
+              <span>{item.label}</span>
+              <span className="text-muted-foreground">importance {item.importance.toFixed(2)} kg</span>
             </li>
           ))}
         </ul>
@@ -226,11 +228,11 @@ export function AlarmList({ items }: { items: Alarm[] }) {
   );
 }
 
+/** Model A's fault detector on the live samples. */
 export function useActiveAlarms() {
-  const live = useFermentation((s) => s.live);
+  const samples = useFermentation((s) => s.live.samples);
   const sensitivity = useFermentation((s) => s.sensitivity);
-  const earlier = live.samples[Math.max(0, live.samples.length - 6)] ?? null;
-  return evaluateAlarms(live.state, earlier, live.setpoints, live.scenario, sensitivity);
+  return modelAlarms(samples, sensitivity);
 }
 
 function Spark({ values }: { values: number[] }) {
