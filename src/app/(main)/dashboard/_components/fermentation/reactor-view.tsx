@@ -33,10 +33,12 @@ const GLASS_R = 0.68;
 const GLASS_H = 2;
 const LIQUID_H = 1.35;
 
-export function ReactorView() {
+export function ReactorView({ readings }: { readings?: Partial<Record<string, string>> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const readingsRef = useRef(readings);
+  readingsRef.current = readings;
   const selected = useFermentation((s) => s.selectedPart);
   const dissect = useFermentation((s) => s.dissect);
   const state = useFermentation((s) => s.live.state);
@@ -162,6 +164,7 @@ export function ReactorView() {
         camera,
         live.live.state,
         live.selectedPart,
+        readingsRef.current,
       );
     };
     loop();
@@ -209,7 +212,7 @@ export function ReactorView() {
         <div className="pointer-events-none max-w-56 rounded-md border bg-white/95 px-3 py-1.5 text-center">
           <div className="font-medium text-[13px] text-neutral-900">{part ? part.label : "Bioreactor BR-101"}</div>
           <div className="text-[11px] text-neutral-600">
-            {part ? `${reading(part.id, state)} · ${COPY[part.id]}` : "Drag to orbit. Scroll to zoom. Click a part."}
+            {calloutCaption(part?.id, state, readings)}
             {hot ? " This part is outside its band." : ""}
           </div>
         </div>
@@ -235,6 +238,7 @@ function paintCallouts(
   camera: THREE.PerspectiveCamera,
   state: ProcessState,
   selected: string | null,
+  readings?: Partial<Record<string, string>>,
 ) {
   if (!svg) return;
   while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -271,7 +275,7 @@ function paintCallouts(
       chip.style.top = `${item.y}px`;
       chip.style.transform = item.side === "left" ? "translate(0, -50%)" : "translate(-100%, -50%)";
       const text = chip.querySelector("span:last-child");
-      if (text) text.textContent = `${callout.label} · ${reading(callout.id, state)}`;
+      if (text) text.textContent = `${callout.label} · ${readings?.[callout.id] ?? reading(callout.id, state)}`;
       const chipWidth = chip.offsetWidth || 108;
       const x2 = item.side === "left" ? item.x + chipWidth : item.x - chipWidth;
       const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -317,6 +321,16 @@ function layoutColumn(
     });
   }
   return placed;
+}
+
+function calloutCaption(id: string | undefined, state: ProcessState, readings?: Partial<Record<string, string>>) {
+  if (!id) {
+    return readings
+      ? "Penicillin, IndPenSim. This is not the yeast protein run."
+      : "Drag to orbit. Scroll to zoom. Click a part.";
+  }
+  const value = readings?.[id] ?? reading(id, state);
+  return readings ? value : `${value} · ${COPY[id]}`;
 }
 
 function reading(id: string, state: ProcessState) {

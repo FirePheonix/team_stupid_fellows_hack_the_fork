@@ -13,6 +13,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import replayJson from "@/lib/fermentation/benchmark-replay.json";
 import reportJson from "@/lib/fermentation/benchmark-report.json";
 
+import { ReactorView } from "../../_components/fermentation/reactor-view";
+import { Ring } from "../../_components/fermentation/rings";
 import { PageHeader } from "../../_components/page-header";
 
 type ReplayBatch = {
@@ -85,7 +87,44 @@ export function BenchmarkView() {
       <PageHeader
         title="Benchmark"
         description="Penicillin, IndPenSim. This is not the yeast protein run. Model A's recipe with separate weights, trained on batches 1–70 and replayed on held-out batches."
+        actions={
+          <a className="text-sm underline" href="/dashboard">
+            Yeast mode
+          </a>
+        }
       />
+      <ReactorView
+        readings={{
+          dissolvedOxygen: `${(batch.doMgL[i] ?? 0).toFixed(1)} mg/L`,
+          temperature: `${(batch.tempC[i] ?? 0).toFixed(1)} °C`,
+          ph: (batch.pH[i] ?? 0).toFixed(2),
+          broth: `${Math.round(batch.volumeL[i] ?? 0).toLocaleString()} L`,
+          sparger: `${(batch.penicillinGL[i] ?? 0).toFixed(1)} g/L penicillin`,
+          impeller: batch.fault ? "fault batch" : "normal batch",
+          motor: `hour ${hour}`,
+        }}
+      />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Ring value={(i + 1) / batch.hours.length} label={`${hour} h`} caption="Replay clock" />
+        <Ring
+          value={batch.totalT > 0 ? Math.min(1, (batch.predT[i] ?? 0) / batch.totalT) : 0}
+          label={(batch.predT[i] ?? 0).toFixed(1)}
+          caption={`Predicted t · recorded ${batch.totalT.toFixed(2)} t`}
+          tone="var(--chart-2)"
+        />
+        <Ring
+          value={Math.min(1, (batch.penicillinGL[i] ?? 0) / 10)}
+          label={(batch.penicillinGL[i] ?? 0).toFixed(1)}
+          caption="Penicillin g/L"
+          tone="var(--chart-3)"
+        />
+        <Ring
+          value={Math.min(1, (batch.faultScore[i] ?? 0) / Math.max(REPLAY.threshold * 2, 0.01))}
+          label={(batch.faultScore[i] ?? 0).toFixed(1)}
+          caption={`Fault score · threshold ${REPLAY.threshold}`}
+          tone={alarmed ? "var(--destructive)" : "var(--chart-4)"}
+        />
+      </div>
       <div className="flex flex-wrap gap-2">
         {REPLAY.batches.map((b) => (
           <Button
@@ -213,25 +252,28 @@ export function BenchmarkView() {
               Calibrated on normal batches only. A process-fault warning, not a contamination test.
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-3 gap-2 text-sm">
-            <Metric label="Faults caught" value={`${REPORT.fault.detection_pct.toFixed(0)}%`} />
-            <Metric label="Median delay" value={`${REPORT.fault.median_delay_h ?? "–"} h`} />
-            <Metric
-              label="False alarms"
-              value={`${REPORT.fault.false_alarm_batches_pct.toFixed(0)}% of ${REPORT.fault.normal_test_batches}`}
+          <CardContent className="flex flex-wrap items-center justify-around gap-4">
+            <Ring
+              value={REPORT.fault.detection_pct / 100}
+              label={`${REPORT.fault.detection_pct.toFixed(0)}%`}
+              caption="Faults caught"
+              tone="var(--chart-2)"
+            />
+            <Ring
+              value={Math.min(1, (REPORT.fault.median_delay_h ?? 0) / 24)}
+              label={`${REPORT.fault.median_delay_h ?? "–"} h`}
+              caption="Median delay"
+              tone="var(--chart-4)"
+            />
+            <Ring
+              value={REPORT.fault.false_alarm_batches_pct / 100}
+              label={`${REPORT.fault.false_alarm_batches_pct.toFixed(0)}%`}
+              caption={`False alarms of ${REPORT.fault.normal_test_batches}`}
+              tone="var(--chart-5)"
             />
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border px-3 py-2">
-      <div className="text-muted-foreground text-xs">{label}</div>
-      <div className="font-medium text-lg">{value}</div>
     </div>
   );
 }

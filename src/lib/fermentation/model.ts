@@ -36,6 +36,37 @@ export const SCENARIOS: { id: Scenario; label: string; note: string }[] = [
 ];
 
 export type FeedstockId = "glucose" | "molasses" | "pea-starch-hydrolysate";
+export type Nitrogen = "ammonia" | "yeast-extract";
+export const DEFAULT_NITROGEN: Nitrogen = "ammonia";
+export const DEFAULT_CN = 8;
+export const CN_BOUNDS = { min: 5, max: 20 };
+
+/**
+ * Cell protein relative to the training point (ammonia, C/N 8), where this returns 1.
+ * Yeast extract supplies more nitrogen than ammonia. A higher carbon-to-nitrogen ratio leaves less nitrogen per
+ * sugar, so the cell stores less protein. This is a modelling assumption, not an assay.
+ */
+export function proteinFractionScale(nitrogen: Nitrogen, cnRatio: number): number {
+  const nitrogenFactor = nitrogen === "yeast-extract" ? 1.06 : 1;
+  const cn = Math.min(CN_BOUNDS.max, Math.max(CN_BOUNDS.min, cnRatio));
+  const carbonFactor = Math.min(1.08, Math.max(0.72, 1 - (cn - DEFAULT_CN) * 0.02));
+  return Math.round(nitrogenFactor * carbonFactor * 1000) / 1000;
+}
+
+export function scaleForecast<T extends { kg: number; low: number; high: number }>(
+  forecast: T,
+  nitrogen: Nitrogen,
+  cnRatio: number,
+): T {
+  const scale = proteinFractionScale(nitrogen, cnRatio);
+  const round = (value: number) => Math.round(value * 100) / 100;
+  return {
+    ...forecast,
+    kg: round(forecast.kg * scale),
+    low: round(forecast.low * scale),
+    high: round(forecast.high * scale),
+  };
+}
 
 /**
  * Feedstock effects on the culture. Growth factors and protein fractions are modelling assumptions in the published
@@ -212,6 +243,7 @@ export function step(
   scenario: Scenario,
   feedstock: FeedstockId = "glucose",
   kin: Kinetics = NOMINAL_KINETICS,
+  culture: { nitrogen: Nitrogen; cnRatio: number } = { nitrogen: DEFAULT_NITROGEN, cnRatio: DEFAULT_CN },
 ): ProcessState {
   const dt = STEP_MINUTES / 60;
   const fs = FEEDSTOCK_PARAMS[feedstock];
@@ -279,7 +311,7 @@ export function step(
     biomass,
     substrate,
     co2,
-    product: biomass * fs.proteinFraction,
+    product: biomass * fs.proteinFraction * proteinFractionScale(culture.nitrogen, culture.cnRatio),
     ethanol,
     volume,
     contaminant,

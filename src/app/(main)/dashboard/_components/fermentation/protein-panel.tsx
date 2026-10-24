@@ -6,15 +6,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import {
   type AgentPacket,
   buildPacket,
+  guardParagraph,
   parseOffline,
   type RunJson,
+  repairRun,
   runFromState,
   templateParagraph,
 } from "@/lib/fermentation/agent";
-import { FEEDSTOCK_PARAMS, type FeedstockId, illustrativePowerKw } from "@/lib/fermentation/model";
+import {
+  CN_BOUNDS,
+  FEEDSTOCK_PARAMS,
+  type FeedstockId,
+  illustrativePowerKw,
+  type Nitrogen,
+  proteinFractionScale,
+  type Setpoints,
+  scaleForecast,
+} from "@/lib/fermentation/model";
 import { airFeedGrid, driversAt, faultEvidence, forecastProtein, readFault } from "@/lib/fermentation/model-a";
 import { candidatesFor, economics, FEEDSTOCKS, INFO, modelB, scoreOf } from "@/lib/fermentation/protein";
 import { parseTurn, writeParagraph } from "@/server/fermatwin-actions";
@@ -26,6 +38,10 @@ export function ProteinDesk() {
   const sensitivity = useFermentation((s) => s.sensitivity);
   const feedstock = useFermentation((s) => s.feedstock);
   const setFeedstock = useFermentation((s) => s.setFeedstock);
+  const nitrogen = useFermentation((s) => s.nitrogen);
+  const setNitrogen = useFermentation((s) => s.setNitrogen);
+  const cnRatio = useFermentation((s) => s.cnRatio);
+  const setCnRatio = useFermentation((s) => s.setCnRatio);
   const setSetpoint = useFermentation((s) => s.setSetpoint);
   const [compare, setCompare] = useState<FeedstockId | null>(null);
   const [question, setQuestion] = useState("");
@@ -33,7 +49,7 @@ export function ProteinDesk() {
   const [busy, setBusy] = useState(false);
   const [paragraph, setParagraph] = useState<{ text: string; source: string } | null>(null);
 
-  const forecast = forecastProtein(live.samples, live.setpoints, feedstock);
+  const forecast = scaleForecast(forecastProtein(live.samples, live.setpoints, feedstock), nitrogen, cnRatio);
   const fault = readFault(live.samples, sensitivity);
   const evidence = faultEvidence(live.state).map((e) => `${e.label} ${e.sigma > 0 ? "+" : ""}${e.sigma.toFixed(1)}σ`);
   const b = modelB(feedstock, compare);
@@ -42,10 +58,23 @@ export function ProteinDesk() {
     [forecast, live.state, live.setpoints, live.scenario, feedstock],
   );
   const score = scoreOf(run, b, fault);
+  const scale = proteinFractionScale(nitrogen, cnRatio);
   const candidates = useMemo(
-    () => candidatesFor(live.samples, live.setpoints, bounds, feedstock),
-    [live.samples, live.setpoints, bounds, feedstock],
+    () =>
+      candidatesFor(live.samples, live.setpoints, bounds, feedstock).map((item) => ({
+        ...item,
+        proteinKg: Math.round(item.proteinKg * scale * 100) / 100,
+        low: Math.round(item.low * scale * 100) / 100,
+        high: Math.round(item.high * scale * 100) / 100,
+      })),
+    [live.samples, live.setpoints, bounds, feedstock, scale],
   );
+  const other = useMemo(() => {
+    if (!compare || compare === feedstock) return null;
+    const otherForecast = scaleForecast(forecastProtein(live.samples, live.setpoints, compare), nitrogen, cnRatio);
+    const otherRun = economics(otherForecast, live.state, live.setpoints, live.scenario, compare);
+    return { proteinKg: otherForecast.kg, msp: otherRun.msp, low: otherForecast.low, high: otherForecast.high };
+  }, [compare, feedstock, live.samples, live.setpoints, live.state, live.scenario, nitrogen, cnRatio]);
   const drivers = driversAt(forecast.frac);
   const grid = useMemo(
     () => airFeedGrid(live.samples, live.setpoints, bounds, feedstock),
@@ -53,7 +82,7 @@ export function ProteinDesk() {
   );
   const powerKw = illustrativePowerKw(live.setpoints);
   const packet: AgentPacket = buildPacket({
-    run: lastRun?.json ?? runFromState(feedstock, live.setpoints),
+    run: lastRun?.json ?? runFromState(feedstock, live.setpoints, { nitrogen, cnRatio }),
     forecast,
     fault,
     evidence,
@@ -63,6 +92,7 @@ export function ProteinDesk() {
     b,
     score,
     economics: run,
+    other,
   });
   const template = templateParagraph(packet);
 
@@ -73,6 +103,8 @@ export function ProteinDesk() {
 
   function applyRun(next: RunJson) {
     if (next.feedstock !== feedstock) setFeedstock(next.feedstock);
+    setNitrogen(next.nitrogen);
+    setCnRatio(next.cnRatio);
     setSetpoint("feedRate", next.settings.sugarFeed);
     setSetpoint("aeration", next.settings.aeration);
     setSetpoint("agitation", next.settings.agitation);
@@ -80,23 +112,86 @@ export function ProteinDesk() {
     setSetpoint("ph", next.settings.ph);
   }
 
+  function setpointsFrom(next: RunJson, base: Setpoints): Setpoints {
+    return {
+      ...base,
+      feedRate: next.settings.sugarFeed,
+      aeration: next.settings.aeration,
+      agitation: next.settings.agitation,
+      temperature: next.settings.temperatureC,
+      ph: next.settings.ph,
+    };
+  }
+
   async function onAsk() {
     if (!question.trim()) return;
     setBusy(true);
-    const current = runFromState(feedstock, live.setpoints);
+    const current = runFromState(feedstock, live.setpoints, { nitrogen, cnRatio });
     const top = candidates.find((c) => c.inBounds)?.id ?? null;
     const remote = await parseTurn(question, current, top).catch(() => null);
-    const json = remote?.run ?? parseOffline(question, current, top);
+    const json = repairRun(remote?.run ?? null, parseOffline(question, current, top));
     setLastRun({ json, source: remote?.source ?? "offline parser" });
+    const chosen =
+      json.intent === "apply"
+        ? candidates.find((item) => item.id === json.applyCandidateId && item.inBounds)
+        : undefined;
     if (json.intent !== "unsupported") {
       setCompare(json.intent === "compare" ? json.compareFeedstock : null);
-      if (json.intent === "apply" && json.applyCandidateId) {
-        const chosen = candidates.find((c) => c.id === json.applyCandidateId && c.inBounds);
-        if (chosen) applyCandidate(chosen.setpoints);
-      } else if (json.intent !== "compare") applyRun(json);
+      setNitrogen(json.nitrogen);
+      setCnRatio(json.cnRatio);
+      if (chosen) applyCandidate(chosen.setpoints);
+      else if (json.intent !== "compare") applyRun(json);
     }
-    const reply = await writeParagraph(packet).catch(() => null);
-    setParagraph(reply);
+    const nextFeedstock = json.intent === "compare" || json.intent === "unsupported" ? feedstock : json.feedstock;
+    const nextCompare = json.intent === "compare" ? json.compareFeedstock : null;
+    let nextSetpoints = live.setpoints;
+    if (json.intent !== "unsupported" && json.intent !== "compare") {
+      nextSetpoints = chosen ? chosen.setpoints : setpointsFrom(json, live.setpoints);
+    }
+    const nextNitrogen = json.intent === "unsupported" ? nitrogen : json.nitrogen;
+    const nextCn = json.intent === "unsupported" ? cnRatio : json.cnRatio;
+    const nextForecast = scaleForecast(
+      forecastProtein(live.samples, nextSetpoints, nextFeedstock),
+      nextNitrogen,
+      nextCn,
+    );
+    const nextScale = proteinFractionScale(nextNitrogen, nextCn);
+    const nextCandidates = candidatesFor(live.samples, nextSetpoints, bounds, nextFeedstock).map((item) => ({
+      ...item,
+      proteinKg: Math.round(item.proteinKg * nextScale * 100) / 100,
+      low: Math.round(item.low * nextScale * 100) / 100,
+      high: Math.round(item.high * nextScale * 100) / 100,
+    }));
+    const nextB = modelB(nextFeedstock, nextCompare);
+    const nextFault = readFault(live.samples, sensitivity);
+    const nextRun = economics(nextForecast, live.state, nextSetpoints, live.scenario, nextFeedstock);
+    const nextOther =
+      nextCompare && nextCompare !== nextFeedstock
+        ? economics(
+            scaleForecast(forecastProtein(live.samples, nextSetpoints, nextCompare), nextNitrogen, nextCn),
+            live.state,
+            nextSetpoints,
+            live.scenario,
+            nextCompare,
+          )
+        : null;
+    const nextPacket: AgentPacket = buildPacket({
+      run: json,
+      forecast: nextForecast,
+      fault: nextFault,
+      evidence: faultEvidence(live.state).map(
+        (item) => `${item.label} ${item.sigma > 0 ? "+" : ""}${item.sigma.toFixed(1)}σ`,
+      ),
+      drivers: driversAt(nextForecast.frac),
+      candidates: nextCandidates,
+      powerKw: illustrativePowerKw(nextSetpoints),
+      b: nextB,
+      score: scoreOf(nextRun, nextB, nextFault),
+      economics: nextRun,
+      other: nextOther ? { proteinKg: nextOther.proteinKg, msp: nextOther.msp } : null,
+    });
+    const reply = await writeParagraph(nextPacket).catch(() => null);
+    setParagraph(guardParagraph(reply?.text ?? null, nextPacket));
     setBusy(false);
   }
 
@@ -257,15 +352,52 @@ export function ProteinDesk() {
           <p className="text-muted-foreground text-xs">
             <Info text={INFO.amino} /> Limiting amino acid: {b.limitingAminoAcid} (coverage {b.coverage.toFixed(2)}).
             Food yeast is protein-rich and usually short on sulfur amino acids. Digestibility: not measured on this
-            batch. Source: {b.source} {b.note} Requirement: WHO/FAO/UNU 2007.
+            batch. DIAAS: no published score for this ingredient is on file. Source: {b.source} {b.note} Requirement:
+            WHO/FAO/UNU 2007.
           </p>
-          {b.comparison ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="flex flex-col gap-1 text-sm">
+              Nitrogen
+              <Info text="Ammonia or yeast extract. Yeast extract raises the protein fraction of the cell. It is not a separate process story." />
+              <Select value={nitrogen} onValueChange={(value) => setNitrogen(value as Nitrogen)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ammonia">Ammonia</SelectItem>
+                  <SelectItem value="yeast-extract">Yeast extract</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-1 text-sm">
+              <span className="flex justify-between">
+                Carbon to nitrogen
+                <span className="text-muted-foreground">{cnRatio.toFixed(1)}</span>
+              </span>
+              <Slider
+                min={CN_BOUNDS.min}
+                max={CN_BOUNDS.max}
+                step={0.5}
+                value={[cnRatio]}
+                onValueChange={(value) => {
+                  const next = value[0];
+                  if (next !== undefined) setCnRatio(next);
+                }}
+              />
+              <span className="text-muted-foreground text-xs">
+                Training point is 8. A higher ratio leaves less nitrogen per sugar, so predicted protein falls.
+              </span>
+            </div>
+          </div>
+          {b.comparison && other ? (
             <p className="text-sm">
               Versus {FEEDSTOCK_PARAMS[b.comparison.other].label}:{" "}
               {b.comparison.higher === "equal"
-                ? "same published amino-acid row, so the choice rests on protein kilograms and MSP."
+                ? "same published amino-acid row."
                 : `coverage ${b.comparison.coverage.toFixed(2)} vs ${b.comparison.otherCoverage.toFixed(2)}.`}{" "}
-              Here: {forecast.kg.toFixed(1)} kg protein at ₹{run.msp}/kg.
+              Model A: this run {forecast.kg.toFixed(1)} kg at ₹{run.msp}/kg,{" "}
+              {FEEDSTOCK_PARAMS[b.comparison.other].label} {other.proteinKg.toFixed(1)} kg ({other.low.toFixed(1)}–
+              {other.high.toFixed(1)}) at ₹{other.msp}/kg.
             </p>
           ) : null}
         </CardContent>

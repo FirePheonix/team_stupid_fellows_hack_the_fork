@@ -178,6 +178,7 @@ export function ReadingGrid() {
 export function YieldCard() {
   const prediction = usePrediction();
   const drivers = driversAt(prediction.frac).slice(0, 4);
+  const topDriver = Math.max(...drivers.map((item) => item.importance), 0.01);
   return (
     <Card>
       <CardHeader>
@@ -186,19 +187,36 @@ export function YieldCard() {
           Predicted from the run model (Model A, gradient-boosted trees trained on held-out-tested yeast batches).
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2 text-sm">
+      <CardContent className="flex flex-col gap-3 text-sm">
         <div className="flex items-end justify-between">
-          <span className="font-medium text-3xl">{prediction.kg.toFixed(1)}</span>
+          <span className="font-medium text-3xl tabular-nums">{prediction.kg.toFixed(1)}</span>
           <span className="text-muted-foreground">
             kg · 80% range {prediction.low.toFixed(1)}–{prediction.high.toFixed(1)}
           </span>
         </div>
-        <p>Using samples up to {Math.round(prediction.frac * 100)}% of the batch.</p>
-        <ul className="space-y-1">
+        <div className="relative h-2 rounded-full bg-muted">
+          <div
+            className="absolute top-1/2 size-3 -translate-y-1/2 rounded-full bg-primary"
+            style={{ left: `calc(${rangePos(prediction.low, prediction.kg, prediction.high)}% - 6px)` }}
+          />
+        </div>
+        <p>Using samples up to {Math.round(prediction.frac * 100)}% of the batch. The dot sits inside the 80% range.</p>
+        <ul className="space-y-2">
           {drivers.map((item) => (
-            <li key={item.name} className="flex justify-between">
-              <span>{item.label}</span>
-              <span className="text-muted-foreground">importance {item.importance.toFixed(2)} kg</span>
+            <li key={item.name} className="flex flex-col gap-1">
+              <span className="flex justify-between">
+                <span>{item.label}</span>
+                <span className="text-muted-foreground tabular-nums">{item.importance.toFixed(2)} kg</span>
+              </span>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full"
+                  style={{
+                    width: `${Math.min(100, (item.importance / topDriver) * 100)}%`,
+                    background: "var(--chart-2)",
+                  }}
+                />
+              </div>
             </li>
           ))}
         </ul>
@@ -233,6 +251,11 @@ export function useActiveAlarms() {
   const samples = useFermentation((s) => s.live.samples);
   const sensitivity = useFermentation((s) => s.sensitivity);
   return modelAlarms(samples, sensitivity);
+}
+
+function rangePos(low: number, value: number, high: number) {
+  const span = high - low || 1;
+  return Math.min(100, Math.max(0, ((value - low) / span) * 100));
 }
 
 function Spark({ values }: { values: number[] }) {

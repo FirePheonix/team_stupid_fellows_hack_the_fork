@@ -8,15 +8,19 @@ import {
   type Bounds,
   clampSetpoints,
   DEFAULT_BOUNDS,
+  DEFAULT_CN,
+  DEFAULT_NITROGEN,
   DEFAULT_SETPOINTS,
   type FeedstockId,
   initialState,
+  type Nitrogen,
   type ProcessState,
   REACTOR_ID,
   runMinutes,
   type Scenario,
   type SetpointKey,
   type Setpoints,
+  scaleForecast,
   step,
 } from "@/lib/fermentation/model";
 import { forecastProtein } from "@/lib/fermentation/model-a";
@@ -41,6 +45,8 @@ type LiveBatch = StoredBatch & { state: ProcessState; feedstock?: FeedstockId };
 type FermentationStore = {
   bounds: Bounds;
   feedstock: FeedstockId;
+  nitrogen: Nitrogen;
+  cnRatio: number;
   sensitivity: number;
   speed: 1 | 4 | 12;
   dissect: boolean;
@@ -55,6 +61,8 @@ type FermentationStore = {
   finish: () => void;
   setScenario: (scenario: Scenario) => void;
   setFeedstock: (feedstock: FeedstockId) => void;
+  setNitrogen: (nitrogen: Nitrogen) => void;
+  setCnRatio: (cnRatio: number) => void;
   setSetpoint: (key: SetpointKey, value: number) => void;
   setSensitivity: (value: number) => void;
   setBound: (key: SetpointKey, edge: "min" | "max", value: number) => void;
@@ -71,6 +79,8 @@ const STORAGE_KEY = "fermatwin.v2";
 export const useFermentation = create<FermentationStore>((set, get) => ({
   bounds: DEFAULT_BOUNDS,
   feedstock: "pea-starch-hydrolysate",
+  nitrogen: DEFAULT_NITROGEN,
+  cnRatio: DEFAULT_CN,
   sensitivity: 50,
   speed: 1,
   dissect: false,
@@ -79,14 +89,14 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
   history: seedHistory(),
   live: idleBatch(DEFAULT_SETPOINTS, "stable", "BR-101 live"),
   tick: () => {
-    const { live, speed, sensitivity, feedstock } = get();
+    const { live, speed, sensitivity, feedstock, nitrogen, cnRatio } = get();
     if (live.status !== "running") return;
     let state = live.state;
     const samples = live.samples.slice();
     let alarms = live.alarms;
     const steps = speed;
     for (let i = 0; i < steps; i++) {
-      state = step(state, live.setpoints, live.scenario, feedstock);
+      state = step(state, live.setpoints, live.scenario, feedstock, undefined, { nitrogen, cnRatio });
       samples.push(state);
       alarms = rememberAlarms(alarms, modelAlarms(samples, sensitivity));
       if (state.tMin >= BATCH_MINUTES) break;
@@ -146,6 +156,14 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
     set({ feedstock });
     persist(get());
   },
+  setNitrogen: (nitrogen) => {
+    set({ nitrogen });
+    persist(get());
+  },
+  setCnRatio: (cnRatio) => {
+    set({ cnRatio: Math.min(20, Math.max(5, cnRatio)) });
+    persist(get());
+  },
   setSetpoint: (key, value) => {
     const { live, bounds } = get();
     const setpoints = clampSetpoints({ ...live.setpoints, [key]: value }, bounds);
@@ -177,6 +195,8 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
       set({
         bounds: saved.bounds ?? get().bounds,
         feedstock: saved.feedstock ?? get().feedstock,
+        nitrogen: saved.nitrogen === "yeast-extract" ? "yeast-extract" : get().nitrogen,
+        cnRatio: typeof saved.cnRatio === "number" ? saved.cnRatio : get().cnRatio,
         sensitivity: saved.sensitivity ?? get().sensitivity,
         history: saved.history?.length ? saved.history : get().history,
         live: saved.live ?? get().live,
@@ -191,7 +211,9 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
 export function usePrediction() {
   const live = useFermentation((s) => s.live);
   const feedstock = useFermentation((s) => s.feedstock);
-  return forecastProtein(live.samples, live.setpoints, feedstock);
+  const nitrogen = useFermentation((s) => s.nitrogen);
+  const cnRatio = useFermentation((s) => s.cnRatio);
+  return scaleForecast(forecastProtein(live.samples, live.setpoints, feedstock), nitrogen, cnRatio);
 }
 
 export function downloadCsv(samples: ProcessState[], name: string) {
@@ -266,11 +288,15 @@ function seeded(id: string, name: string, scenario: Scenario, startedAt: string)
   };
 }
 
-function persist(state: Pick<FermentationStore, "bounds" | "feedstock" | "sensitivity" | "history" | "live">) {
+function persist(
+  state: Pick<FermentationStore, "bounds" | "feedstock" | "nitrogen" | "cnRatio" | "sensitivity" | "history" | "live">,
+) {
   if (typeof window === "undefined") return;
   const payload = {
     bounds: state.bounds,
     feedstock: state.feedstock,
+    nitrogen: state.nitrogen,
+    cnRatio: state.cnRatio,
     sensitivity: state.sensitivity,
     history: state.history,
     live: state.live,
