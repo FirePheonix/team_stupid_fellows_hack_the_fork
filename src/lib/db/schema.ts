@@ -468,6 +468,10 @@ export const fermentationSamples = pgTable(
     substrate: real("substrate").notNull(),
     co2: real("co2").notNull(),
     product: real("product").notNull(),
+    ethanol: real("ethanol").notNull().default(0),
+    contaminant: real("contaminant").notNull().default(0),
+    sugarFedKg: real("sugar_fed_kg").notNull().default(0),
+    energyKwh: real("energy_kwh").notNull().default(0),
     volume: real("volume").notNull(),
   },
   (table) => [index("fermentation_samples_batch_idx").on(table.batchId, table.tMin)],
@@ -479,6 +483,7 @@ export const fermentationAnomalies = pgTable("fermentation_anomalies", {
     .notNull()
     .references(() => fermentationBatches.id, { onDelete: "cascade" }),
   parameter: varchar("parameter", { length: 40 }).notNull(),
+  partId: varchar("part_id", { length: 40 }).notNull().default(""),
   severity: varchar("severity", { length: 20 }).notNull(),
   tMin: integer("t_min").notNull(),
   evidence: text("evidence").notNull(),

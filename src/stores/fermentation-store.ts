@@ -194,22 +194,37 @@ export const useFermentation = create<FermentationStore>((set, get) => ({
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       persist(get());
-      return;
+    } else {
+      try {
+        const saved = JSON.parse(raw) as Partial<FermentationStore>;
+        set({
+          bounds: saved.bounds ?? get().bounds,
+          feedstock: saved.feedstock ?? get().feedstock,
+          nitrogen: saved.nitrogen === "yeast-extract" ? "yeast-extract" : get().nitrogen,
+          cnRatio: typeof saved.cnRatio === "number" ? saved.cnRatio : get().cnRatio,
+          sensitivity: saved.sensitivity ?? get().sensitivity,
+          history: saved.history?.length ? saved.history : get().history,
+          live: saved.live ?? get().live,
+        });
+      } catch {
+        persist(get());
+      }
     }
-    try {
-      const saved = JSON.parse(raw) as Partial<FermentationStore>;
-      set({
-        bounds: saved.bounds ?? get().bounds,
-        feedstock: saved.feedstock ?? get().feedstock,
-        nitrogen: saved.nitrogen === "yeast-extract" ? "yeast-extract" : get().nitrogen,
-        cnRatio: typeof saved.cnRatio === "number" ? saved.cnRatio : get().cnRatio,
-        sensitivity: saved.sensitivity ?? get().sensitivity,
-        history: saved.history?.length ? saved.history : get().history,
-        live: saved.live ?? get().live,
-      });
-    } catch {
-      persist(get());
-    }
+    void import("@/server/fermentation-actions")
+      .then((mod) => mod.listFermentationBatches())
+      .then((remote) => {
+        const stored = remote.flatMap((batch) => {
+          if (!isScenario(batch.scenario) || !isStatus(batch.status)) return [];
+          return [{ ...batch, scenario: batch.scenario, status: batch.status }];
+        });
+        if (stored.length === 0) return;
+        const remoteIds = new Set(stored.map((batch) => batch.id));
+        const pending = get().history.filter((batch) => !remoteIds.has(batch.id) && !batch.id.startsWith("demo-"));
+        const history = [...pending, ...stored].slice(0, 24);
+        set({ history });
+        persist({ ...get(), history });
+      })
+      .catch(() => undefined);
   },
 }));
 
@@ -292,6 +307,14 @@ function seeded(id: string, name: string, scenario: Scenario, startedAt: string)
     startedAt,
     finishedAt: startedAt,
   };
+}
+
+function isScenario(value: string): value is Scenario {
+  return value === "stable" || value === "oxygen-limitation" || value === "ph-drift" || value === "contamination";
+}
+
+function isStatus(value: string): value is BatchStatus {
+  return value === "idle" || value === "running" || value === "paused" || value === "finished";
 }
 
 function persist(

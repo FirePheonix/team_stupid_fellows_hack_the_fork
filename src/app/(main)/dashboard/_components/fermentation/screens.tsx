@@ -14,12 +14,16 @@ import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { correlations, explainProcess } from "@/lib/fermentation/insights";
+import { correlations, explainProcess, forewarning } from "@/lib/fermentation/insights";
 import {
   BATCH_MINUTES,
+  type FeedstockId,
   type ProcessState,
+  project,
   SCENARIOS,
+  type Scenario,
   type SetpointKey,
+  type Setpoints,
   TARGET_YIELD_G_L,
 } from "@/lib/fermentation/model";
 import { downloadCsv, type StoredBatch, useFermentation, usePrediction } from "@/stores/fermentation-store";
@@ -188,8 +192,11 @@ export function OverviewView() {
 
 export function RunsView() {
   const live = useFermentation((s) => s.live);
+  const sensitivity = useFermentation((s) => s.sensitivity);
+  const feedstock = useFermentation((s) => s.feedstock);
   const alarms = useActiveAlarms();
   const scenario = SCENARIOS.find((item) => item.id === live.scenario);
+  const open = live.status === "running" || live.status === "paused";
   return (
     <div className="flex flex-col gap-4 pb-14">
       <PageHeader
@@ -206,6 +213,26 @@ export function RunsView() {
       />
       <p className="text-muted-foreground text-sm">{scenario?.note}</p>
       <RunKpis />
+      <Card>
+        <CardHeader>
+          <CardTitle>{open ? "Before it lands" : "What was already visible"}</CardTitle>
+          <CardDescription>
+            {open
+              ? "Read from the path so far, while the knobs can still be changed."
+              : "The early samples, read against how the batch ended."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AheadNote
+            samples={live.samples.length > 0 ? live.samples : [live.state]}
+            setpoints={live.setpoints}
+            scenario={live.scenario}
+            sensitivity={sensitivity}
+            feedstock={feedstock}
+            open={open}
+          />
+        </CardContent>
+      </Card>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
         <div className="flex flex-col gap-4 xl:col-span-7">
           <ReactorView />
@@ -302,7 +329,9 @@ export function HistoryView() {
                         <Link href={runPath(batch.id)} className="font-medium underline">
                           {batch.name}
                         </Link>
-                        <div className="text-muted-foreground text-xs">{runPath(batch.id)}</div>
+                        <p className="mt-1 max-w-sm text-muted-foreground text-xs">
+                          {forewarning(batch.samples, batch.setpoints, 50)}
+                        </p>
                       </TableCell>
                       <TableCell>{batch.scenario}</TableCell>
                       <TableCell>
@@ -710,6 +739,32 @@ export function SettingsView() {
   );
 }
 
+function AheadNote({
+  samples,
+  setpoints,
+  scenario,
+  sensitivity,
+  feedstock,
+  open,
+}: {
+  samples: ProcessState[];
+  setpoints: Setpoints;
+  scenario: Scenario;
+  sensitivity: number;
+  feedstock: FeedstockId;
+  open: boolean;
+}) {
+  const text = useMemo(() => {
+    const now = samples.at(-1);
+    const ahead =
+      open && now && now.tMin < BATCH_MINUTES
+        ? project(now, setpoints, scenario, BATCH_MINUTES, feedstock).ethanol
+        : null;
+    return forewarning(samples, setpoints, sensitivity, ahead);
+  }, [samples, setpoints, scenario, sensitivity, feedstock, open]);
+  return <p className="text-sm">{text}</p>;
+}
+
 function summarize(batch: StoredBatch) {
   const end = batch.samples.at(-1);
   const scenario = SCENARIOS.find((item) => item.id === batch.scenario)?.label ?? batch.scenario;
@@ -756,6 +811,7 @@ export function RunReport({ batch }: { batch: StoredBatch | undefined }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        <p className="text-sm">{forewarning(batch.samples, batch.setpoints, 50)}</p>
         <div className="grid grid-cols-3">
           <Ring value={clock} label={end ? `${end.tMin}` : "0"} caption="Minutes" />
           <Ring

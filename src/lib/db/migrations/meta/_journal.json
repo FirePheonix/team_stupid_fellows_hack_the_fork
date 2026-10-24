@@ -43,6 +43,13 @@
       "when": 1792806400000,
       "tag": "0005_fermentation_batches",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792900000000,
+      "tag": "0006_fermentation_sample_fields",
+      "breakpoints": true
     }
   ]
 }
